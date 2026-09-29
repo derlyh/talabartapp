@@ -26,7 +26,8 @@ export function navegar(path) {
  */
 function getRutaActual() {
     const hash = window.location.hash.slice(1) || '/dashboard';
-    const [ruta, ...params] = hash.split('?');
+    const [rutaHash, ...params] = hash.split('?');
+    const ruta = rutaHash.toLowerCase();
     const queryParams = new URLSearchParams(params.join('?'));
     return { ruta, queryParams };
 }
