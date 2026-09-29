@@ -1,0 +1,926 @@
+<!-- ============================================================
+     Módulo de Dashboard — Tablero Principal TalabartApp
+     ============================================================ -->
+<div class="modulo-dashboard">
+
+    <!-- Estilos específicos del Dashboard con variables del sistema -->
+    <style>
+        .modulo-dashboard {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xl);
+            animation: dashFadeIn 0.3s ease-out;
+        }
+
+        @keyframes dashFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ---- Encabezado y Saludo ---- */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: var(--space-lg);
+            background: linear-gradient(135deg, var(--color-surface) 0%, var(--color-surface-2) 100%);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg) var(--space-xl);
+            position: relative;
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 140px;
+            height: 140px;
+            background: radial-gradient(circle, rgba(212, 165, 116, 0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .dashboard-saludo h1 {
+            font-size: 1.65rem;
+            margin: 0 0 var(--space-xs) 0;
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            color: var(--color-text);
+        }
+
+        .dashboard-saludo-meta {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: var(--space-sm);
+            color: var(--color-text-secondary);
+            font-size: 0.88rem;
+        }
+
+        .dashboard-saludo-meta .meta-sep {
+            color: var(--color-border-light);
+        }
+
+        .dashboard-saludo-meta .meta-date {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .badge-rol {
+            padding: 3px 10px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            border-radius: var(--radius-full);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-rol-admin {
+            background: rgba(231, 76, 60, 0.18);
+            color: #ff6b6b;
+            border: 1px solid rgba(231, 76, 60, 0.35);
+        }
+
+        .badge-rol-vendedor {
+            background: rgba(52, 152, 219, 0.18);
+            color: #5dade2;
+            border: 1px solid rgba(52, 152, 219, 0.35);
+        }
+
+        .badge-rol-trabajador {
+            background: rgba(243, 156, 18, 0.18);
+            color: #f5b041;
+            border: 1px solid rgba(243, 156, 18, 0.35);
+        }
+
+        .dashboard-header-acciones {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .btn-refresh {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+
+        .btn-refresh.rotando .icono-refresh {
+            animation: giroInfinito 0.8s linear infinite;
+        }
+
+        @keyframes giroInfinito {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* ---- Grid de Estadísticas Rápidas ---- */
+        .dashboard-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: var(--space-lg);
+        }
+
+        .dash-stat-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+        }
+
+        .dash-stat-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--color-border-light);
+            box-shadow: var(--shadow-md);
+        }
+
+        .dash-stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-md);
+        }
+
+        .dash-stat-titulo {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+        }
+
+        .dash-stat-icon-wrapper {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.35rem;
+            flex-shrink: 0;
+        }
+
+        .icon-ventas {
+            background: rgba(46, 204, 113, 0.12);
+            color: var(--color-success);
+            border: 1px solid rgba(46, 204, 113, 0.25);
+        }
+
+        .icon-inventario {
+            background: rgba(52, 152, 219, 0.12);
+            color: var(--color-info);
+            border: 1px solid rgba(52, 152, 219, 0.25);
+        }
+
+        .icon-produccion {
+            background: rgba(243, 156, 18, 0.12);
+            color: var(--color-warning);
+            border: 1px solid rgba(243, 156, 18, 0.25);
+        }
+
+        .icon-cuentas {
+            background: rgba(212, 165, 116, 0.15);
+            color: var(--color-secondary);
+            border: 1px solid rgba(212, 165, 116, 0.3);
+        }
+
+        .dash-stat-valor {
+            font-size: 1.85rem;
+            font-weight: 700;
+            color: var(--color-text);
+            line-height: 1.2;
+            margin-bottom: var(--space-xs);
+            letter-spacing: -0.5px;
+        }
+
+        .dash-stat-subtexto {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: var(--space-xs);
+            line-height: 1.4;
+        }
+
+        .dash-pill-alerta {
+            background: rgba(231, 76, 60, 0.15);
+            color: #ff6b6b;
+            padding: 1px 7px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 0.72rem;
+            border: 1px solid rgba(231, 76, 60, 0.3);
+        }
+
+        .dash-pill-ok {
+            background: rgba(46, 204, 113, 0.15);
+            color: var(--color-success);
+            padding: 1px 7px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 0.72rem;
+            border: 1px solid rgba(46, 204, 113, 0.3);
+        }
+
+        /* ---- Accesos Rápidos (Shortcuts) ---- */
+        .dashboard-shortcuts-section {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+        }
+
+        .seccion-encabezado {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .seccion-titulo {
+            font-size: 0.88rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--color-text-secondary);
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            margin: 0;
+        }
+
+        .shortcuts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: var(--space-md);
+        }
+
+        .shortcut-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding: var(--space-md) var(--space-lg);
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            color: var(--color-text);
+            text-decoration: none;
+            transition: all var(--transition);
+            cursor: pointer;
+        }
+
+        .shortcut-item:hover {
+            background: var(--color-surface-2);
+            border-color: var(--color-secondary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+            color: var(--color-text);
+        }
+
+        .shortcut-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-md);
+            background: var(--color-surface-3);
+            border: 1px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.35rem;
+            flex-shrink: 0;
+            transition: transform var(--transition), border-color var(--transition);
+        }
+
+        .shortcut-item:hover .shortcut-icon {
+            transform: scale(1.08);
+            border-color: var(--color-secondary);
+        }
+
+        .shortcut-detalle {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .shortcut-nombre {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        .shortcut-desc {
+            font-size: 0.78rem;
+            color: var(--color-text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* ---- Sección Inferior de 2 Columnas ---- */
+        .dashboard-bottom-grid {
+            display: grid;
+            grid-template-columns: 1.22fr 1fr;
+            gap: var(--space-xl);
+            align-items: start;
+        }
+
+        .dash-panel {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .dash-panel-header {
+            padding: var(--space-md) var(--space-lg);
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--color-surface-2);
+            gap: var(--space-md);
+        }
+
+        .dash-panel-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            color: var(--color-text);
+        }
+
+        .dash-panel-body {
+            padding: var(--space-md);
+            min-height: 280px;
+        }
+
+        /* Tabla de Alertas de Stock Bajo */
+        .producto-celda-compacta {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .producto-thumb-mini {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            background: var(--color-surface-3);
+            border: 1px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.15rem;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .producto-meta-compacta {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .producto-nombre-alerta {
+            font-weight: 600;
+            font-size: 0.88rem;
+            color: var(--color-text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 170px;
+        }
+
+        .producto-cat-alerta {
+            font-size: 0.72rem;
+            color: var(--color-text-secondary);
+        }
+
+        .stock-badge-critico {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: var(--radius-full);
+            font-weight: 700;
+            font-size: 0.75rem;
+            background: rgba(231, 76, 60, 0.18);
+            color: #ff6b6b;
+            border: 1px solid rgba(231, 76, 60, 0.35);
+        }
+
+        .stock-badge-bajo {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: var(--radius-full);
+            font-weight: 700;
+            font-size: 0.75rem;
+            background: rgba(243, 156, 18, 0.18);
+            color: #f5b041;
+            border: 1px solid rgba(243, 156, 18, 0.35);
+        }
+
+        .acciones-alerta-grupo {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Pestañas de Actividad Reciente */
+        .actividad-tabs {
+            display: flex;
+            gap: 4px;
+            background: var(--color-surface-3);
+            padding: 3px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--color-border);
+        }
+
+        .tab-btn-actividad {
+            background: none;
+            border: none;
+            color: var(--color-text-secondary);
+            padding: var(--space-xs) var(--space-md);
+            font-size: 0.8rem;
+            font-weight: 600;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+
+        .tab-btn-actividad.active {
+            background: var(--color-surface);
+            color: var(--color-text);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .actividad-lista {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+        }
+
+        .actividad-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-sm) var(--space-md);
+            background: var(--color-surface-2);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            transition: background var(--transition), border-color var(--transition);
+        }
+
+        .actividad-card:hover {
+            background: var(--color-surface-3);
+            border-color: var(--color-border-light);
+        }
+
+        .actividad-lado-izq {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            min-width: 0;
+        }
+
+        .actividad-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: var(--radius-md);
+            background: var(--color-surface-3);
+            border: 1px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.15rem;
+            flex-shrink: 0;
+        }
+
+        .actividad-info {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .actividad-titulo {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--color-text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .actividad-sub {
+            font-size: 0.75rem;
+            color: var(--color-text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .actividad-lado-der {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 2px;
+            flex-shrink: 0;
+        }
+
+        .actividad-monto {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--color-secondary);
+        }
+
+        .actividad-tiempo {
+            font-size: 0.72rem;
+            color: var(--color-text-muted);
+        }
+
+        /* Estados vacíos */
+        .dash-empty-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: var(--space-2xl) var(--space-md);
+            color: var(--color-text-secondary);
+            gap: var(--space-xs);
+        }
+
+        .dash-empty-icon {
+            font-size: 2.5rem;
+            margin-bottom: var(--space-xs);
+            opacity: 0.85;
+        }
+
+        .dash-empty-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--color-text);
+            margin: 0;
+        }
+
+        .dash-empty-desc {
+            font-size: 0.82rem;
+            color: var(--color-text-muted);
+            margin: 0;
+            max-width: 300px;
+        }
+
+        /* Modal Cerrar */
+        .modal-cerrar-btn {
+            background: none;
+            border: none;
+            color: var(--color-text-muted);
+            cursor: pointer;
+            font-size: 1.4rem;
+            line-height: 1;
+            padding: var(--space-xs);
+            border-radius: var(--radius-sm);
+            transition: color var(--transition);
+        }
+
+        .modal-cerrar-btn:hover {
+            color: var(--color-text);
+        }
+
+        /* Responsividad */
+        @media (max-width: 992px) {
+            .dashboard-bottom-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .dashboard-header {
+                padding: var(--space-md);
+            }
+            .dashboard-saludo h1 {
+                font-size: 1.35rem;
+            }
+            .dash-stat-valor {
+                font-size: 1.5rem;
+            }
+            .producto-nombre-alerta {
+                max-width: 120px;
+            }
+            .actividad-card {
+                padding: var(--space-xs) var(--space-sm);
+            }
+        }
+    </style>
+
+    <!-- 1. Encabezado del Tablero Principal -->
+    <header class="dashboard-header">
+        <div class="dashboard-saludo">
+            <h1>
+                <span>📊</span> Tablero Principal
+            </h1>
+            <div class="dashboard-saludo-meta">
+                <span id="dash-greeting-text">Bienvenido al sistema</span>
+                <span class="meta-sep">•</span>
+                <span class="meta-date" id="dash-current-date">
+                    <span>📅</span> Cargando fecha...
+                </span>
+                <span class="meta-sep">•</span>
+                <span class="badge-rol badge-rol-vendedor" id="dash-user-rol">Cargando rol...</span>
+            </div>
+        </div>
+
+        <div class="dashboard-header-acciones">
+            <button class="btn btn-secondary btn-sm btn-refresh" id="btn-refresh-dashboard" title="Actualizar datos del tablero">
+                <span class="icono-refresh">🔄</span> Actualizar
+            </button>
+        </div>
+    </header>
+
+    <!-- 2. Grid de Estadísticas Rápidas -->
+    <section class="dashboard-stats-grid" aria-label="Métricas Principales">
+        <!-- Tarjeta 1: Ventas del Mes -->
+        <div class="dash-stat-card" id="card-stat-ventas">
+            <div class="dash-stat-header">
+                <span class="dash-stat-titulo">Ventas del Mes</span>
+                <div class="dash-stat-icon-wrapper icon-ventas">
+                    <span>💰</span>
+                </div>
+            </div>
+            <div class="dash-stat-valor" id="stat-ventas-valor">$ 0</div>
+            <div class="dash-stat-subtexto" id="stat-ventas-sub">
+                <span>Calculando ventas del mes actual...</span>
+            </div>
+        </div>
+
+        <!-- Tarjeta 2: Productos en Inventario -->
+        <div class="dash-stat-card" id="card-stat-inventario">
+            <div class="dash-stat-header">
+                <span class="dash-stat-titulo">Inventario Total</span>
+                <div class="dash-stat-icon-wrapper icon-inventario">
+                    <span>📦</span>
+                </div>
+            </div>
+            <div class="dash-stat-valor" id="stat-inventario-valor">0 u.</div>
+            <div class="dash-stat-subtexto" id="stat-inventario-sub">
+                <span>Calculando existencias y stock...</span>
+            </div>
+        </div>
+
+        <!-- Tarjeta 3: Producción en Proceso -->
+        <div class="dash-stat-card" id="card-stat-produccion">
+            <div class="dash-stat-header">
+                <span class="dash-stat-titulo">Producción Activa</span>
+                <div class="dash-stat-icon-wrapper icon-produccion">
+                    <span>🔨</span>
+                </div>
+            </div>
+            <div class="dash-stat-valor" id="stat-produccion-valor">0 lotes</div>
+            <div class="dash-stat-subtexto" id="stat-produccion-sub">
+                <span>Monitoreando talleres de artesanos...</span>
+            </div>
+        </div>
+
+        <!-- Tarjeta 4: Cuentas Pendientes por Cobrar -->
+        <div class="dash-stat-card" id="card-stat-cuentas">
+            <div class="dash-stat-header">
+                <span class="dash-stat-titulo">Cuentas por Cobrar</span>
+                <div class="dash-stat-icon-wrapper icon-cuentas">
+                    <span>📱</span>
+                </div>
+            </div>
+            <div class="dash-stat-valor" id="stat-cuentas-valor">$ 0</div>
+            <div class="dash-stat-subtexto" id="stat-cuentas-sub">
+                <span>Cuentas pendientes por recaudar...</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Accesos Rápidos (Shortcuts) -->
+    <section class="dashboard-shortcuts-section" aria-label="Accesos Rápidos">
+        <div class="seccion-encabezado">
+            <h2 class="seccion-titulo">⚡ Accesos Rápidos</h2>
+        </div>
+
+        <div class="shortcuts-grid">
+            <!-- Shortcut 1: Nueva Venta -->
+            <a href="#/nueva-venta" class="shortcut-item" id="shortcut-nueva-venta" title="Crear una nueva orden de venta">
+                <div class="shortcut-icon" style="color: var(--color-success);">
+                    <span>🛒</span>
+                </div>
+                <div class="shortcut-detalle">
+                    <span class="shortcut-nombre">Nueva Venta</span>
+                    <span class="shortcut-desc">Registrar ticket de venta</span>
+                </div>
+            </a>
+
+            <!-- Shortcut 2: Nuevo Producto -->
+            <a href="#/inventario" class="shortcut-item" id="shortcut-nuevo-producto" title="Ir al catálogo y agregar producto">
+                <div class="shortcut-icon" style="color: var(--color-info);">
+                    <span>📦</span>
+                </div>
+                <div class="shortcut-detalle">
+                    <span class="shortcut-nombre">Nuevo Producto</span>
+                    <span class="shortcut-desc">Gestión y catálogo de stock</span>
+                </div>
+            </a>
+
+            <!-- Shortcut 3: Registrar Producción -->
+            <a href="#/productividad" class="shortcut-item" id="shortcut-produccion" title="Registrar avance de taller o artesano">
+                <div class="shortcut-icon" style="color: var(--color-warning);">
+                    <span>🔨</span>
+                </div>
+                <div class="shortcut-detalle">
+                    <span class="shortcut-nombre">Registrar Producción</span>
+                    <span class="shortcut-desc">Lotes de confección artesanal</span>
+                </div>
+            </a>
+
+            <!-- Shortcut 4: Cobro QR -->
+            <a href="#/qr" class="shortcut-item" id="shortcut-cobro-qr" title="Generar cobro digital con código QR">
+                <div class="shortcut-icon" style="color: var(--color-secondary);">
+                    <span>📱</span>
+                </div>
+                <div class="shortcut-detalle">
+                    <span class="shortcut-nombre">Cobro QR</span>
+                    <span class="shortcut-desc">Cobro digital inmediato</span>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <!-- 4. Sección Inferior de 2 Columnas -->
+    <section class="dashboard-bottom-grid">
+        <!-- Columna Izquierda: Alertas de Stock Bajo -->
+        <div class="dash-panel" id="panel-alertas-stock">
+            <div class="dash-panel-header">
+                <h3 class="dash-panel-title">
+                    <span>📦</span> Alertas de Stock Bajo
+                </h3>
+                <span class="badge badge-agotado" id="dash-badge-criticos">0 Críticos</span>
+            </div>
+
+            <div class="dash-panel-body" id="contenedor-alertas-stock">
+                <div class="loading-contenedor">
+                    <div class="spinner"></div>
+                    <p>Verificando niveles de inventario...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna Derecha: Actividad Reciente -->
+        <div class="dash-panel" id="panel-actividad-reciente">
+            <div class="dash-panel-header">
+                <h3 class="dash-panel-title">
+                    <span>🕒</span> Actividad Reciente
+                </h3>
+                <div class="actividad-tabs">
+                    <button class="tab-btn-actividad active" id="tab-actividad-ventas" data-target="ventas">
+                        🛒 Ventas
+                    </button>
+                    <button class="tab-btn-actividad" id="tab-actividad-produccion" data-target="produccion">
+                        🔨 Producción
+                    </button>
+                </div>
+            </div>
+
+            <div class="dash-panel-body">
+                <!-- Panel de Ventas Recientes -->
+                <div id="contenedor-actividad-ventas">
+                    <div class="loading-contenedor">
+                        <div class="spinner"></div>
+                        <p>Cargando ventas recientes...</p>
+                    </div>
+                </div>
+
+                <!-- Panel de Producción Reciente -->
+                <div id="contenedor-actividad-produccion" style="display: none;">
+                    <div class="loading-contenedor">
+                        <div class="spinner"></div>
+                        <p>Cargando registros de producción...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         MODAL 1: Reabastecimiento Rápido de Stock
+         ============================================================ -->
+    <div class="modal-overlay" id="modal-reabastecer" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>📦 Reabastecer Inventario</h3>
+                <button type="button" class="modal-cerrar-btn" id="btn-cerrar-modal-reabastecer" aria-label="Cerrar">&times;</button>
+            </div>
+            <form id="form-reabastecer-stock">
+                <div class="modal-body">
+                    <input type="hidden" id="reabastecer-producto-id" name="producto_id">
+
+                    <div class="form-group" style="margin-bottom: var(--space-md);">
+                        <label style="font-size: 0.8rem; text-transform: uppercase; color: var(--color-text-muted); font-weight: 600;">Producto</label>
+                        <div id="reabastecer-producto-nombre" style="font-size: 1.05rem; font-weight: 600; color: var(--color-secondary);">
+                            —
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md); margin-bottom: var(--space-md);">
+                        <div class="form-group">
+                            <label style="font-size: 0.8rem; text-transform: uppercase; color: var(--color-text-muted); font-weight: 600;">Stock Actual</label>
+                            <div id="reabastecer-stock-actual" style="font-size: 1.25rem; font-weight: 700; color: var(--color-text);">
+                                0
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="reabastecer-cantidad-input" style="font-size: 0.8rem; text-transform: uppercase; color: var(--color-text-muted); font-weight: 600;">Unidades a Ingresar *</label>
+                            <input type="number" id="reabastecer-cantidad-input" name="cantidad" class="input" min="1" max="9999" value="10" required style="font-size: 1.05rem; font-weight: 600;">
+                        </div>
+                    </div>
+
+                    <div style="background: var(--color-surface-2); border: 1px dashed var(--color-border); padding: var(--space-sm) var(--space-md); border-radius: var(--radius-md); display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 0.85rem; color: var(--color-text-secondary);">Nuevo Stock Estimado:</span>
+                        <strong id="reabastecer-stock-resultado" style="font-size: 1.15rem; color: var(--color-success);">10 unidades</strong>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="btn-cancelar-reabastecer">Cancelar</button>
+                    <button type="submit" class="btn btn-success" id="btn-guardar-reabastecer">✅ Confirmar Ingreso</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         MODAL 2: Ordenar Lote de Producción Rápido
+         ============================================================ -->
+    <div class="modal-overlay" id="modal-ordenar-produccion" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>🔨 Ordenar Producción de Taller</h3>
+                <button type="button" class="modal-cerrar-btn" id="btn-cerrar-modal-produccion" aria-label="Cerrar">&times;</button>
+            </div>
+            <form id="form-ordenar-produccion">
+                <div class="modal-body">
+                    <input type="hidden" id="orden-producto-id" name="producto_id">
+
+                    <div class="form-group" style="margin-bottom: var(--space-md);">
+                        <label style="font-size: 0.8rem; text-transform: uppercase; color: var(--color-text-muted); font-weight: 600;">Artículo a Confeccionar</label>
+                        <div id="orden-producto-nombre" style="font-size: 1.05rem; font-weight: 600; color: var(--color-secondary);">
+                            —
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: var(--space-md);">
+                        <label for="orden-trabajador-select" style="font-size: 0.8rem; text-transform: uppercase; color: var(--color-text-muted); font-weight: 600;">Artesano / Trabajador Asignado *</label>
+                        <select id="orden-trabajador-select" name="trabajador_id" class="input" required>
+                            <option value="">Seleccione artesano disponible...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: var(--space-md);">
+                        <label for="orden-cantidad-input" style="font-size: 0.8rem; text-transform: uppercase; color: var(--color-text-muted); font-weight: 600;">Cantidad de Piezas a Confeccionar *</label>
+                        <input type="number" id="orden-cantidad-input" name="cantidad" class="input" min="1" max="999" value="5" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="orden-notas-input" style="font-size: 0.8rem; text-transform: uppercase; color: var(--color-text-muted); font-weight: 600;">Especificaciones o Notas</label>
+                        <textarea id="orden-notas-input" name="notas" class="input" rows="2" placeholder="Ej: Cuero de calibre especial, costura perimetral reforzada, herrajes en bronce..."></textarea>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="btn-cancelar-produccion">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="btn-guardar-produccion">🚀 Iniciar Lote</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>

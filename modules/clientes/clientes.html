@@ -1,0 +1,116 @@
+<!-- ============================================================
+     Módulo: Directorio de Clientes
+     Vista: modules/clientes/clientes.html
+     ============================================================ -->
+
+<!-- Encabezado de página -->
+<div class="page-header">
+    <div>
+        <h1>👥 Directorio de Clientes</h1>
+        <p class="text-muted" style="margin-top: var(--space-xs); margin-bottom: 0;">
+            Gestión de clientes, información de contacto e historial comercial
+        </p>
+    </div>
+    <button type="button" class="btn btn-primary" id="btn-nuevo-cliente">
+        ➕ Nuevo Cliente
+    </button>
+</div>
+
+<!-- Barra de búsqueda y filtros -->
+<div class="card" style="margin-bottom: var(--space-lg); padding: var(--space-md) var(--space-lg);">
+    <div class="filtros-bar" style="margin-bottom: 0; justify-content: space-between;">
+        <div class="busqueda-input" style="flex: 1; max-width: 480px;">
+            <input type="text" id="input-buscar-cliente" placeholder="Buscar por nombre, teléfono o correo..." autocomplete="off">
+        </div>
+        <div style="display: flex; align-items: center; gap: var(--space-md);">
+            <button type="button" class="btn btn-secondary btn-sm" id="btn-limpiar-busqueda" style="display: none;">
+                ✕ Limpiar
+            </button>
+            <span id="contador-clientes" class="text-muted" style="font-size: 0.85rem;">
+                Cargando...
+            </span>
+        </div>
+    </div>
+</div>
+
+<!-- Tabla de clientes -->
+<div class="card">
+    <div class="tabla-contenedor">
+        <table class="tabla-clientes">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Teléfono</th>
+                    <th>Correo</th>
+                    <th>Dirección</th>
+                    <th>Total Compras / Notas</th>
+                    <th style="text-align: right;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tabla-clientes-body">
+                <tr>
+                    <td colspan="6">
+                        <div class="loading-contenedor">
+                            <div class="spinner"></div>
+                            <p>Cargando clientes...</p>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Contenedor de paginación -->
+    <div id="paginacion-clientes" class="paginacion"></div>
+</div>
+
+<!-- Modal para Crear / Editar Cliente -->
+<div class="modal-overlay hidden" id="modal-cliente" role="dialog" aria-modal="true" aria-labelledby="modal-cliente-titulo">
+    <div class="modal" style="max-width: 540px;">
+        <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <h3 id="modal-cliente-titulo">➕ Nuevo Cliente</h3>
+            <button type="button" class="btn-logout" id="btn-cerrar-modal" title="Cerrar modal" style="font-size: 1.5rem; line-height: 1; padding: 0 var(--space-xs);">×</button>
+        </div>
+
+        <form id="form-cliente" novalidate>
+            <div class="modal-body">
+                <!-- ID oculto para edición -->
+                <input type="hidden" id="cliente-id" name="id">
+
+                <div class="form-group">
+                    <label for="cliente-nombre">Nombre completo <span class="text-error">*</span></label>
+                    <input type="text" id="cliente-nombre" name="nombre" placeholder="Ej: Santiago Morales" required autocomplete="name">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="cliente-telefono">Teléfono / Celular</label>
+                        <input type="tel" id="cliente-telefono" name="telefono" placeholder="Ej: +57 310 123 4567" autocomplete="tel">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cliente-email">Correo electrónico</label>
+                        <input type="email" id="cliente-email" name="email" placeholder="cliente@correo.com" autocomplete="email">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="cliente-direccion">Dirección</label>
+                    <input type="text" id="cliente-direccion" name="direccion" placeholder="Ej: Carrera 15 # 85-20, Bogotá">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="cliente-notas">Notas y observaciones</label>
+                    <textarea id="cliente-notas" name="notas" rows="3" placeholder="Preferencias, medidas especiales, pedidos frecuentes..."></textarea>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="btn-cancelar-modal">Cancelar</button>
+                <button type="submit" class="btn btn-primary" id="btn-guardar-cliente">
+                    💾 Guardar Cliente
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

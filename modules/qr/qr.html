@@ -1,0 +1,143 @@
+<div class="modulo-qr">
+    <div class="page-header">
+        <div>
+            <h1>📱 Cobro con Código QR</h1>
+            <p class="text-muted">Genera y comparte códigos QR de cobro para pagos móviles y transferencias bancarias de tus clientes.</p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <button class="btn btn-secondary" id="btn-config-cuentas">⚙️ Configurar Cuentas</button>
+            <a href="#/nueva-venta" class="btn btn-primary">➕ Registrar Venta con QR</a>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: var(--space-xl); align-items: start;">
+        <!-- Columna Izquierda: Cuentas por Cobrar -->
+        <div class="card">
+            <div class="card-header">
+                <h3>📋 Cuentas de Cobro Activas</h3>
+                <span class="badge badge-pendiente" id="contador-cuentas">0 pendientes</span>
+            </div>
+
+            <div class="filtros-bar mb-1">
+                <div class="busqueda-input" style="flex: 1;">
+                    <input type="text" id="filtro-buscar-cuenta" placeholder="Buscar por cliente o ID de venta...">
+                </div>
+                <div>
+                    <select id="filtro-estado-cuenta">
+                        <option value="">Todos los estados</option>
+                        <option value="pendiente" selected>Pendientes</option>
+                        <option value="pagada">Pagadas</option>
+                    </select>
+                </div>
+                <button class="btn btn-secondary btn-icon" id="btn-refrescar-cuentas" title="Recargar">🔄</button>
+            </div>
+
+            <div class="tabla-contenedor" style="max-height: 520px; overflow-y: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Cliente</th>
+                            <th>Monto</th>
+                            <th>Estado</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cuentas-tbody">
+                        <tr>
+                            <td colspan="5" class="text-center py-4">
+                                <div class="spinner"></div>
+                                <p class="mt-1 text-muted">Cargando cuentas de cobro...</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="paginacion-cuentas"></div>
+        </div>
+
+        <!-- Columna Derecha: Tarjeta de Visualización del QR -->
+        <div class="card" id="tarjeta-qr-contenedor">
+            <div class="card-header">
+                <h3 id="qr-tarjeta-titulo">Código QR de Pago</h3>
+                <span class="badge badge-qr" id="qr-estado-badge">Seleccione una cuenta</span>
+            </div>
+
+            <div id="qr-placeholder" class="text-center py-4" style="padding: var(--space-2xl) var(--space-md);">
+                <div style="font-size: 3.5rem; margin-bottom: var(--space-md);">📱</div>
+                <p class="text-muted">Selecciona una cuenta de la lista de la izquierda o registra una nueva venta para generar el código QR de pago.</p>
+            </div>
+
+            <div id="qr-contenido" class="hidden">
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; background: white; padding: var(--space-lg); border-radius: var(--radius-lg); margin-bottom: var(--space-lg); box-shadow: var(--shadow-sm); border: 2px solid var(--color-border);">
+                    <canvas id="qr-canvas" style="max-width: 250px; height: auto;"></canvas>
+                    <p style="color: #333; font-weight: 600; margin-top: var(--space-sm); font-size: 0.85rem; margin-bottom: 0;">
+                        Escanea para ver cuenta y pagar
+                    </p>
+                </div>
+
+                <div class="info-grid mb-1">
+                    <div class="info-item">
+                        <div class="info-label">CLIENTE</div>
+                        <div class="info-valor" id="qr-info-cliente">—</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">MONTO TOTAL</div>
+                        <div class="info-valor text-success" id="qr-info-monto" style="font-size: 1.2rem; font-weight: 700;">—</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">VENTA #</div>
+                        <div class="info-valor" id="qr-info-venta" style="font-family: var(--font-mono); font-size: 0.8rem;">—</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">FECHA</div>
+                        <div class="info-valor" id="qr-info-fecha">—</div>
+                    </div>
+                </div>
+
+                <div class="form-group mb-1">
+                    <label>Enlace Público para el Cliente</label>
+                    <div style="display: flex; gap: var(--space-xs);">
+                        <input type="text" id="qr-url-publica" readonly style="font-family: var(--font-mono); font-size: 0.8rem;">
+                        <button class="btn btn-secondary" id="btn-copiar-url" title="Copiar enlace">📋</button>
+                        <a href="#" target="_blank" class="btn btn-secondary" id="btn-abrir-publico" title="Abrir vista cliente">🔗</a>
+                    </div>
+                </div>
+
+                <div class="btn-group" style="display: flex; flex-direction: column; gap: var(--space-sm);">
+                    <div style="display: flex; gap: var(--space-sm); width: 100%;">
+                        <button class="btn btn-secondary" id="btn-descargar-qr" style="flex: 1;">
+                            ⬇️ Descargar Imagen QR
+                        </button>
+                        <button class="btn btn-secondary" id="btn-compartir-whatsapp" style="flex: 1;">
+                            💬 Enviar por WhatsApp
+                        </button>
+                    </div>
+                    <button class="btn btn-success" id="btn-marcar-pagada" style="width: 100%;">
+                        ✅ Marcar Cuenta como Pagada
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Configuración Cuentas -->
+<div class="modal" id="modal-config-cuentas">
+    <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-header">
+            <h3>⚙️ Configurar Cuentas Bancarias</h3>
+            <button class="modal-close" id="btn-cerrar-config">×</button>
+        </div>
+        <div class="modal-body">
+            <p class="text-muted">Estas son las cuentas que verán tus clientes al escanear el QR.</p>
+            <form id="form-config-cuentas">
+                <div id="lista-cuentas-config"></div>
+                <button type="button" class="btn btn-outline btn-sm mt-1" id="btn-add-cuenta">➕ Agregar Otra Cuenta</button>
+                <div style="margin-top: 20px;">
+                    <button type="submit" class="btn btn-primary btn-block">Guardar Configuración</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

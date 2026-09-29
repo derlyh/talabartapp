@@ -1,0 +1,384 @@
+<!-- Módulo de Control de Productividad Artesanal — TalabartApp -->
+<div class="modulo-productividad">
+
+    <!-- Estilos específicos del módulo de productividad -->
+    <style>
+        .productividad-header-desc {
+            color: var(--color-text-secondary);
+            font-size: 0.9rem;
+            margin-top: var(--space-xs);
+        }
+
+        .metricas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+        }
+
+        .metrica-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md) var(--space-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .metrica-icono {
+            font-size: 2.2rem;
+            width: 52px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--color-surface-2);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--color-border);
+            flex-shrink: 0;
+        }
+
+        .metrica-info {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .metrica-valor {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--color-text);
+            line-height: 1.2;
+        }
+
+        .metrica-etiqueta {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+        }
+
+        .tabla-produccion-contenedor {
+            overflow-x: auto;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--color-border);
+            background: var(--color-surface);
+        }
+
+        .trabajador-celda {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .trabajador-avatar-mini {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-full);
+            background: var(--color-primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.82rem;
+            flex-shrink: 0;
+        }
+
+        .alerta-trigger-info {
+            background: rgba(52, 152, 219, 0.1);
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            border-left: 4px solid var(--color-info);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-sm);
+            font-size: 0.88rem;
+            color: var(--color-text);
+            margin-top: var(--space-md);
+            line-height: 1.45;
+        }
+
+        .alerta-trigger-info .alerta-icono {
+            font-size: 1.3rem;
+            flex-shrink: 0;
+            line-height: 1;
+        }
+
+        .resumen-orden-finalizar {
+            background: var(--color-surface-2);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-bottom: var(--space-md);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-sm) var(--space-md);
+            font-size: 0.88rem;
+        }
+
+        .resumen-item-label {
+            color: var(--color-text-muted);
+            font-size: 0.76rem;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .resumen-item-valor {
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        .acciones-produccion {
+            display: flex;
+            gap: var(--space-xs);
+            justify-content: flex-end;
+            align-items: center;
+        }
+    </style>
+
+    <!-- Encabezado de Página -->
+    <header class="page-header">
+        <div>
+            <h1>🔨 Control de Productividad Artesanal</h1>
+            <p class="productividad-header-desc">Registro y monitoreo de manufactura en taller, avance de piezas y cálculo de mano de obra.</p>
+        </div>
+        <div class="btn-group">
+            <a href="#/pagos" class="btn btn-secondary" title="Ir al módulo de liquidación de pagos">
+                💰 Ver Pagos y Nómina
+            </a>
+            <button type="button" class="btn btn-primary" id="btn-nueva-produccion" title="Registrar una nueva orden de trabajo en taller">
+                ➕ Registrar Producción
+            </button>
+        </div>
+    </header>
+
+    <!-- Tarjetas de Métricas de Productividad -->
+    <div class="metricas-grid">
+        <div class="metrica-card">
+            <div class="metrica-icono">⏳</div>
+            <div class="metrica-info">
+                <span class="metrica-valor" id="metrica-en-proceso">0</span>
+                <span class="metrica-etiqueta">Órdenes En Proceso</span>
+            </div>
+        </div>
+        <div class="metrica-card">
+            <div class="metrica-icono">✅</div>
+            <div class="metrica-info">
+                <span class="metrica-valor" id="metrica-terminadas">0</span>
+                <span class="metrica-etiqueta">Órdenes Terminadas</span>
+            </div>
+        </div>
+        <div class="metrica-card">
+            <div class="metrica-icono">📦</div>
+            <div class="metrica-info">
+                <span class="metrica-valor" id="metrica-unidades">0</span>
+                <span class="metrica-etiqueta">Unidades Fabricadas</span>
+            </div>
+        </div>
+        <div class="metrica-card">
+            <div class="metrica-icono">⏱️</div>
+            <div class="metrica-info">
+                <span class="metrica-valor" id="metrica-horas">0.0 h</span>
+                <span class="metrica-etiqueta">Horas Registradas</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Barra de Filtros -->
+    <div class="card mb-1">
+        <div class="filtros-bar" style="margin-bottom: 0;">
+            <!-- Filtro de Trabajador (visible para administradores) -->
+            <div id="filtro-trabajador-contenedor">
+                <select id="filtro-trabajador" aria-label="Filtrar por artesano">
+                    <option value="">Todos los artesanos</option>
+                </select>
+            </div>
+
+            <!-- Filtro por Estado -->
+            <select id="filtro-estado" aria-label="Filtrar por estado">
+                <option value="">Todos los estados</option>
+                <option value="en_proceso">En Proceso</option>
+                <option value="terminado">Terminado</option>
+                <option value="rechazado">Cancelado / Rechazado</option>
+            </select>
+
+            <!-- Rango de Fechas -->
+            <div style="display: flex; align-items: center; gap: var(--space-xs); flex-wrap: wrap;">
+                <label for="filtro-fecha-desde" style="font-size: 0.8rem; color: var(--color-text-secondary); margin-bottom: 0;">Desde:</label>
+                <input type="date" id="filtro-fecha-desde" aria-label="Fecha inicio desde" style="min-width: 140px;">
+                <label for="filtro-fecha-hasta" style="font-size: 0.8rem; color: var(--color-text-secondary); margin-bottom: 0;">Hasta:</label>
+                <input type="date" id="filtro-fecha-hasta" aria-label="Fecha inicio hasta" style="min-width: 140px;">
+            </div>
+
+            <!-- Botón Restablecer -->
+            <button type="button" class="btn btn-secondary" id="btn-limpiar-filtros" title="Restablecer todos los filtros">
+                🔄 Limpiar
+            </button>
+        </div>
+    </div>
+
+    <!-- Tabla de Órdenes de Producción -->
+    <div class="card">
+        <div class="tabla-produccion-contenedor">
+            <table id="tabla-produccion">
+                <thead>
+                    <tr>
+                        <th>Fecha Inicio</th>
+                        <th>Trabajador</th>
+                        <th>Producto</th>
+                        <th class="text-center">Cantidad</th>
+                        <th class="text-center">Horas Reg.</th>
+                        <th>Estado</th>
+                        <th>Fecha Término</th>
+                        <th class="text-right">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-produccion-body">
+                    <tr>
+                        <td colspan="8">
+                            <div class="loading-contenedor">
+                                <div class="spinner"></div>
+                                <p>Cargando órdenes de producción...</p>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Contenedor de Paginación -->
+        <div id="paginacion-produccion"></div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- Modal: Registrar Producción -->
+    <!-- ============================================================ -->
+    <div class="modal-overlay hidden" id="modal-nueva-produccion" role="dialog" aria-modal="true" aria-labelledby="modal-nueva-produccion-titulo">
+        <div class="modal modal-lg">
+            <div class="modal-header">
+                <h3 id="modal-nueva-produccion-titulo">➕ Registrar Orden de Producción</h3>
+                <button type="button" class="btn-cerrar-modal" id="btn-cerrar-modal-nueva" aria-label="Cerrar modal">&times;</button>
+            </div>
+
+            <form id="form-nueva-produccion">
+                <div class="modal-body">
+                    <!-- Selector de Trabajador (si es admin puede elegir; si es trabajador se asigna automáticamente) -->
+                    <div class="form-group" id="grupo-trabajador-select">
+                        <label for="produccion-trabajador">Artesano / Trabajador Asignado *</label>
+                        <select id="produccion-trabajador" name="trabajador_id" required>
+                            <option value="">Seleccionar artesano...</option>
+                        </select>
+                        <small class="text-muted" id="ayuda-trabajador" style="display: none;"></small>
+                    </div>
+
+                    <!-- Banner de autoasignación si el usuario autenticado es trabajador -->
+                    <div class="info-item mb-1" id="banner-autoasignado-trabajador" style="display: none; padding: var(--space-sm) var(--space-md); background: var(--color-surface-2); border-radius: var(--radius-md); border: 1px solid var(--color-border);">
+                        <span class="info-label">Trabajador Responsable:</span>
+                        <span class="info-valor" id="nombre-trabajador-autoasignado">—</span>
+                    </div>
+
+                    <!-- Selector de Producto (Filtrado exclusivamente a origen = 'fabricado') -->
+                    <div class="form-group">
+                        <label for="produccion-producto">Producto de Taller a Fabricar *</label>
+                        <select id="produccion-producto" name="producto_id" required>
+                            <option value="">Cargando catálogo fabricado...</option>
+                        </select>
+                        <small class="text-muted">Solo se listan piezas artesanales con origen 'Fabricado'.</small>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 1;">
+                            <label for="produccion-cantidad">Cantidad a Producir (Unidades) *</label>
+                            <input type="number" id="produccion-cantidad" name="cantidad" min="1" step="1" value="1" required placeholder="1">
+                        </div>
+                        <div class="form-group" style="flex: 1.5;">
+                            <label for="produccion-fecha-inicio">Fecha de Asignación / Inicio</label>
+                            <input type="datetime-local" id="produccion-fecha-inicio" name="fecha_inicio">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="produccion-notas">Notas y Especificaciones de Manufactura</label>
+                        <textarea id="produccion-notas" name="notas" rows="3" placeholder="Detalles de vaqueta, teñido, costura a mano, repujado o especificaciones especiales de la pieza..."></textarea>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="btn-cancelar-nueva-produccion">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="btn-guardar-produccion">
+                        🔨 Iniciar Producción
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- Modal: Finalizar Producción -->
+    <!-- ============================================================ -->
+    <div class="modal-overlay hidden" id="modal-finalizar-produccion" role="dialog" aria-modal="true" aria-labelledby="modal-finalizar-titulo">
+        <div class="modal modal-lg">
+            <div class="modal-header">
+                <h3 id="modal-finalizar-titulo">✅ Marcar Producción como Terminada</h3>
+                <button type="button" class="btn-cerrar-modal" id="btn-cerrar-modal-finalizar" aria-label="Cerrar modal">&times;</button>
+            </div>
+
+            <form id="form-finalizar-produccion">
+                <div class="modal-body">
+                    <input type="hidden" id="finalizar-orden-id">
+
+                    <!-- Resumen de la Orden -->
+                    <div class="resumen-orden-finalizar">
+                        <div>
+                            <div class="resumen-item-label">Producto</div>
+                            <div class="resumen-item-valor" id="finalizar-producto-nombre">—</div>
+                        </div>
+                        <div>
+                            <div class="resumen-item-label">Cantidad Producida</div>
+                            <div class="resumen-item-valor" id="finalizar-producto-cantidad">—</div>
+                        </div>
+                        <div>
+                            <div class="resumen-item-label">Artesano Responsable</div>
+                            <div class="resumen-item-valor" id="finalizar-trabajador-nombre">—</div>
+                        </div>
+                        <div>
+                            <div class="resumen-item-label">Modalidad de Pago</div>
+                            <div class="resumen-item-valor" id="finalizar-tarifa-info">—</div>
+                        </div>
+                    </div>
+
+                    <!-- Input de Horas Trabajadas -->
+                    <div class="form-group">
+                        <label for="finalizar-horas">Horas Trabajadas en Esta Orden *</label>
+                        <input type="number" id="finalizar-horas" name="horas_trabajadas" min="0" step="0.25" placeholder="Ej: 4.5" required>
+                        <small class="text-muted" id="finalizar-ayuda-horas">
+                            Ingresa el total de horas invertidas en la manufactura de estas piezas. Si el artesano cobra por hora, este valor determinará su pago.
+                        </small>
+                    </div>
+
+                    <!-- Aviso de Trigger Automatizado -->
+                    <div class="alerta-trigger-info">
+                        <span class="alerta-icono">⚡</span>
+                        <div>
+                            <strong>Automatización en Base de Datos:</strong><br>
+                            Al marcar esta orden como <strong>'Terminado'</strong>, el trigger de la base de datos sumará automáticamente el stock al inventario y calculará el pago del trabajador.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="btn-cancelar-finalizar">Cancelar</button>
+                    <button type="submit" class="btn btn-success" id="btn-confirmar-finalizar">
+                        ✅ Confirmar y Finalizar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>

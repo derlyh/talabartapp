@@ -1,0 +1,177 @@
+<div class="nueva-venta-modulo">
+    <!-- Encabezado de página -->
+    <header class="page-header" style="margin-bottom: var(--space-md);">
+        <div>
+            <div style="margin-bottom: var(--space-xs);">
+                <a href="#/ventas" class="text-muted" style="font-size: 0.85rem;">← Volver al listado de ventas</a>
+            </div>
+            <h1>🛒 Punto de Venta (POS)</h1>
+            <p class="text-muted" style="margin-bottom:0;">Selecciona productos del catálogo y procesa la venta en tiempo real</p>
+        </div>
+        <div>
+            <span class="badge badge-disponible" id="pos-vendedor-badge">Vendedor activo</span>
+        </div>
+    </header>
+
+    <!-- Layout en 2 columnas: Catálogo a la izquierda, Carrito/Orden a la derecha -->
+    <div class="pos-layout">
+        <!-- ==================== COLUMNA IZQUIERDA: CATÁLOGO ==================== -->
+        <section class="pos-catalogo">
+            <!-- Barra de Búsqueda y Filtro de Categorías -->
+            <div class="card" style="padding: var(--space-md);">
+                <div class="pos-catalogo-header">
+                    <div class="busqueda-input">
+                        <input type="text" id="pos-buscar-producto" placeholder="Buscar producto por nombre o descripción...">
+                    </div>
+                    <!-- Píldoras de Categorías dinámicas -->
+                    <div class="categorias-pills" id="pos-categorias-pills">
+                        <button type="button" class="categoria-pill active" data-categoria-id="">Todas</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grid de Tarjetas de Productos -->
+            <div class="pos-productos-grid" id="pos-productos-grid">
+                <div class="loading-contenedor" style="grid-column: 1 / -1;">
+                    <div class="spinner"></div>
+                    <p>Cargando catálogo de productos...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== COLUMNA DERECHA: ORDEN / CARRITO ==================== -->
+        <aside class="pos-carrito">
+            <!-- Cabecera del carrito -->
+            <div class="carrito-header">
+                <h2>🧾 Resumen de Venta</h2>
+                <button type="button" class="btn btn-sm btn-secondary" id="btn-vaciar-carrito" title="Vaciar todos los artículos">
+                    🗑️ Vaciar
+                </button>
+            </div>
+
+            <!-- Selección de Cliente -->
+            <div class="carrito-cliente-seccion">
+                <label for="pos-cliente-select">Cliente</label>
+                <div class="carrito-cliente-input-group">
+                    <select id="pos-cliente-select">
+                        <option value="">👤 Público General (Sin registrar)</option>
+                        <!-- Opciones de clientes cargadas dinámicamente -->
+                    </select>
+                    <button type="button" class="btn btn-secondary btn-icon" id="btn-abrir-cliente-modal" title="Agregar cliente nuevo rápidamente">
+                        ➕
+                    </button>
+                </div>
+            </div>
+
+            <!-- Lista de Artículos Seleccionados -->
+            <label style="margin-bottom: var(--space-xs);">Artículos en el pedido</label>
+            <div class="carrito-items-wrapper" id="carrito-items-wrapper">
+                <div class="empty-state" style="padding: var(--space-lg) 0;" id="carrito-empty">
+                    <div class="empty-icono" style="font-size: 2rem;">🛒</div>
+                    <p style="font-size: 0.85rem; margin-bottom: 0;">El carrito está vacío.<br>Haz clic en un producto para agregarlo.</p>
+                </div>
+                <div id="carrito-items-lista"></div>
+            </div>
+
+            <!-- Método de Pago -->
+            <div style="margin-bottom: var(--space-md);">
+                <label>Método de Pago</label>
+                <div class="metodos-pago-grid" id="metodos-pago-grid">
+                    <button type="button" class="metodo-pago-btn active" data-metodo="efectivo">
+                        💵 Efectivo
+                    </button>
+                    <button type="button" class="metodo-pago-btn" data-metodo="transferencia">
+                        🏦 Transferencia
+                    </button>
+                    <button type="button" class="metodo-pago-btn" data-metodo="tarjeta">
+                        💳 Tarjeta
+                    </button>
+                    <button type="button" class="metodo-pago-btn" data-metodo="qr">
+                        📱 QR
+                    </button>
+                </div>
+            </div>
+
+            <!-- Notas adicionales -->
+            <div class="form-group" style="margin-bottom: var(--space-md);">
+                <label for="pos-notas">Notas u Observaciones (opcional)</label>
+                <input type="text" id="pos-notas" placeholder="Ej: Pago contra entrega, descuento aplicado...">
+            </div>
+
+            <!-- Totales de la Orden -->
+            <div class="totales-card">
+                <div class="total-linea">
+                    <span>Artículos</span>
+                    <span id="pos-total-items">0 uds</span>
+                </div>
+                <div class="total-linea">
+                    <span>Subtotal</span>
+                    <span id="pos-subtotal">$0</span>
+                </div>
+                <div class="total-linea total-destacado">
+                    <span>Total a Cobrar</span>
+                    <span id="pos-total">$0</span>
+                </div>
+            </div>
+
+            <!-- Botones de Acción -->
+            <div class="carrito-acciones">
+                <button type="button" class="btn btn-success btn-lg" id="btn-completar-venta" style="width:100%; justify-content:center; font-size:1.05rem;">
+                    ✅ Completar Venta
+                </button>
+                <a href="#/ventas" class="btn btn-secondary" id="btn-cancelar-venta" style="width:100%; justify-content:center;">
+                    ❌ Cancelar y Volver
+                </a>
+            </div>
+        </aside>
+    </div>
+
+    <!-- ==================== MODAL: RÁPIDO AGREGAR CLIENTE ==================== -->
+    <div class="modal-overlay hidden" id="modal-nuevo-cliente" role="dialog" aria-modal="true" aria-labelledby="modal-cliente-titulo">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modal-cliente-titulo">👤 Registrar Nuevo Cliente</h3>
+                <button type="button" class="modal-cerrar" id="btn-cerrar-cliente-modal" aria-label="Cerrar modal">&times;</button>
+            </div>
+
+            <form id="form-nuevo-cliente">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="cliente-nombre">Nombre Completo *</label>
+                        <input type="text" id="cliente-nombre" name="nombre" placeholder="Ej: Juan Pérez" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="cliente-telefono">Teléfono</label>
+                            <input type="tel" id="cliente-telefono" name="telefono" placeholder="Ej: 300 123 4567">
+                        </div>
+                        <div class="form-group">
+                            <label for="cliente-email">Correo Electrónico</label>
+                            <input type="email" id="cliente-email" name="email" placeholder="cliente@correo.com">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cliente-direccion">Dirección</label>
+                        <input type="text" id="cliente-direccion" name="direccion" placeholder="Ej: Calle 10 # 4-20">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="cliente-notas">Notas</label>
+                        <textarea id="cliente-notas" name="notas" placeholder="Información adicional del cliente..." style="min-height: 60px;"></textarea>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="btn-cancelar-cliente">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="btn-guardar-cliente">
+                        Guardar Cliente
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

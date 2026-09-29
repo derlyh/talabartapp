@@ -1,0 +1,343 @@
+<!-- Módulo de Inventario — TalabartApp -->
+<div class="modulo-inventario">
+
+    <!-- Estilos específicos del módulo -->
+    <style>
+        .inventario-header-desc {
+            color: var(--color-text-secondary);
+            font-size: 0.9rem;
+            margin-top: var(--space-xs);
+        }
+
+        .producto-celda {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .producto-thumb {
+            width: 46px;
+            height: 46px;
+            border-radius: var(--radius-md);
+            object-fit: cover;
+            background: var(--color-surface-3);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            border: 1px solid var(--color-border);
+        }
+
+        .producto-info {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .producto-nombre {
+            font-weight: 600;
+            color: var(--color-text);
+            font-size: 0.95rem;
+        }
+
+        .producto-desc {
+            font-size: 0.8rem;
+            color: var(--color-text-secondary);
+            max-width: 280px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .modal-lg {
+            max-width: 640px;
+            width: 95%;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.25rem;
+        }
+
+        .btn-cerrar-modal {
+            background: none;
+            border: none;
+            color: var(--color-text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+            line-height: 1;
+            padding: var(--space-xs);
+            border-radius: var(--radius-sm);
+            transition: color var(--transition);
+        }
+
+        .btn-cerrar-modal:hover {
+            color: var(--color-text);
+        }
+
+        .modal-body {
+            max-height: calc(85vh - 140px);
+            overflow-y: auto;
+        }
+
+        .producto-preview-contenedor {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            background: var(--color-surface-2);
+            padding: var(--space-sm);
+            border-radius: var(--radius-md);
+            border: 1px dashed var(--color-border);
+        }
+
+        .producto-preview-img {
+            width: 60px;
+            height: 60px;
+            border-radius: var(--radius-sm);
+            object-fit: cover;
+            border: 1px solid var(--color-border);
+        }
+
+        .stock-destacado-alerta {
+            color: var(--color-error);
+            font-weight: 700;
+        }
+
+        .stock-destacado-bajo {
+            color: var(--color-warning);
+            font-weight: 600;
+        }
+
+        .form-categoria-agregar {
+            background: var(--color-surface-2);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--color-border);
+        }
+
+        .acciones-celda {
+            display: flex;
+            gap: var(--space-xs);
+            justify-content: flex-end;
+        }
+    </style>
+
+    <!-- Encabezado de Página -->
+    <header class="page-header">
+        <div>
+            <h1>📦 Inventario de Productos</h1>
+            <p class="inventario-header-desc">Control y gestión de existencias, precios y catálogo de piezas de talabartería.</p>
+        </div>
+        <div class="btn-group">
+            <button type="button" class="btn btn-secondary" id="btn-categorias" title="Gestionar categorías de productos">
+                🏷️ Categorías
+            </button>
+            <button type="button" class="btn btn-primary" id="btn-nuevo-producto" title="Crear un nuevo producto">
+                ➕ Nuevo Producto
+            </button>
+        </div>
+    </header>
+
+    <!-- Barra de Filtros -->
+    <div class="card mb-1">
+        <div class="filtros-bar" style="margin-bottom: 0;">
+            <div class="busqueda-input" style="flex: 1; min-width: 220px;">
+                <input type="text" id="filtro-busqueda" placeholder="Buscar por nombre o descripción..." autocomplete="off">
+            </div>
+
+            <select id="filtro-categoria" aria-label="Filtrar por categoría">
+                <option value="">Todas las categorías</option>
+            </select>
+
+            <select id="filtro-estado" aria-label="Filtrar por estado">
+                <option value="">Todos los estados</option>
+                <option value="disponible">Disponible</option>
+                <option value="en_produccion">En Producción</option>
+                <option value="agotado">Agotado</option>
+            </select>
+
+            <select id="filtro-origen" aria-label="Filtrar por origen">
+                <option value="">Todos los orígenes</option>
+                <option value="fabricado">Fabricado</option>
+                <option value="comprado">Comprado</option>
+            </select>
+
+            <button type="button" class="btn btn-secondary" id="btn-limpiar-filtros" title="Restablecer todos los filtros">
+                🔄 Limpiar
+            </button>
+        </div>
+    </div>
+
+    <!-- Tabla de Productos -->
+    <div class="card">
+        <div class="tabla-contenedor">
+            <table id="tabla-productos">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Categoría</th>
+                        <th>Origen</th>
+                        <th>Precio Venta</th>
+                        <th>Stock</th>
+                        <th>Estado</th>
+                        <th class="text-right">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-productos-body">
+                    <tr>
+                        <td colspan="7">
+                            <div class="loading-contenedor">
+                                <div class="spinner"></div>
+                                <p>Cargando productos...</p>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Contenedor de Paginación -->
+        <div id="paginacion-inventario"></div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- Modal: Producto (Crear / Editar) -->
+    <!-- ============================================================ -->
+    <div class="modal-overlay hidden" id="modal-producto" role="dialog" aria-modal="true" aria-labelledby="modal-producto-titulo">
+        <div class="modal modal-lg">
+            <div class="modal-header">
+                <h3 id="modal-producto-titulo">➕ Nuevo Producto</h3>
+                <button type="button" class="btn-cerrar-modal" id="btn-cerrar-modal-producto" aria-label="Cerrar modal">&times;</button>
+            </div>
+
+            <form id="form-producto">
+                <div class="modal-body">
+                    <input type="hidden" id="producto-id" name="id">
+
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 2;">
+                            <label for="producto-nombre">Nombre del Producto *</label>
+                            <input type="text" id="producto-nombre" name="nombre" required placeholder="Ej: Montura Charra de Cuero" maxlength="150">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label for="producto-categoria">Categoría</label>
+                            <select id="producto-categoria" name="categoria_id">
+                                <option value="">Sin categoría</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="producto-descripcion">Descripción</label>
+                        <textarea id="producto-descripcion" name="descripcion" rows="2" placeholder="Detalles de manufactura, tipo de cuero, dimensiones o especificaciones..."></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="producto-precio">Precio de Venta ($) *</label>
+                            <input type="number" id="producto-precio" name="precio" min="0" step="0.01" required placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label for="producto-stock">Stock Actual *</label>
+                            <input type="number" id="producto-stock" name="stock" min="0" step="1" required value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="producto-origen">Origen *</label>
+                            <select id="producto-origen" name="origen" required>
+                                <option value="fabricado">Fabricado en taller</option>
+                                <option value="comprado">Comprado a proveedor</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="producto-estado">Estado *</label>
+                            <select id="producto-estado" name="estado" required>
+                                <option value="disponible">Disponible</option>
+                                <option value="en_produccion">En Producción</option>
+                                <option value="agotado">Agotado</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="producto-imagen-url">URL de Imagen</label>
+                        <input type="url" id="producto-imagen-url" name="imagen_url" placeholder="https://ejemplo.com/imagenes/montura.jpg">
+                        <div id="producto-imagen-preview-box" class="producto-preview-contenedor mt-1" style="display: none;">
+                            <img id="producto-preview-img" src="" alt="Vista previa de imagen" class="producto-preview-img">
+                            <span class="text-muted" style="font-size:0.85rem;">Vista previa de la imagen del producto</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="btn-cancelar-producto">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="btn-guardar-producto">
+                        💾 Guardar Producto
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- Modal: Categorías (Gestión) -->
+    <!-- ============================================================ -->
+    <div class="modal-overlay hidden" id="modal-categorias" role="dialog" aria-modal="true" aria-labelledby="modal-categorias-titulo">
+        <div class="modal modal-lg">
+            <div class="modal-header">
+                <h3 id="modal-categorias-titulo">🏷️ Gestión de Categorías</h3>
+                <button type="button" class="btn-cerrar-modal" id="btn-cerrar-modal-categorias" aria-label="Cerrar modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <!-- Formulario agregar categoría -->
+                <form id="form-categoria" class="form-categoria-agregar mb-1">
+                    <div class="form-row" style="align-items: flex-end;">
+                        <div class="form-group" style="margin-bottom: 0; flex: 1.2;">
+                            <label for="categoria-nombre">Nueva Categoría *</label>
+                            <input type="text" id="categoria-nombre" name="nombre" required placeholder="Ej: Monturas, Cinturones, Fundas...">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0; flex: 1.5;">
+                            <label for="categoria-descripcion">Descripción (opcional)</label>
+                            <input type="text" id="categoria-descripcion" name="descripcion" placeholder="Descripción breve...">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0; flex: 0 0 auto;">
+                            <button type="submit" class="btn btn-primary" id="btn-guardar-categoria">
+                                ➕ Agregar
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Tabla de categorías existentes -->
+                <div class="tabla-contenedor" style="max-height: 280px; overflow-y: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Descripción</th>
+                                <th class="text-right" style="width: 100px;">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-categorias-body">
+                            <tr>
+                                <td colspan="3" class="text-center text-muted">Cargando categorías...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="btn-cerrar-categorias-footer">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+</div>

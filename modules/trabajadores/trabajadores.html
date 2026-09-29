@@ -1,0 +1,132 @@
+﻿<div class="modulo-trabajadores">
+    <div class="page-header">
+        <div>
+            <h1>👥 Trabajadores y Artesanos del Taller</h1>
+            <p class="text-muted">Administra al personal del taller, asigna sus modalidades de trabajo y define sus tarifas de liquidación automática.</p>
+        </div>
+        <div class="btn-group">
+            <button class="btn btn-primary" id="btn-nuevo-trabajador">
+                ➕ Nuevo Trabajador / Artesano
+            </button>
+        </div>
+    </div>
+
+    <!-- Filtros y Búsqueda -->
+    <div class="card mb-1">
+        <div class="filtros-bar">
+            <div class="busqueda-input" style="flex: 1; min-width: 240px;">
+                <input type="text" id="filtro-buscar-trabajador" placeholder="Buscar por nombre o teléfono...">
+            </div>
+            <div>
+                <select id="filtro-rol-trabajador">
+                    <option value="">Todos los roles</option>
+                    <option value="trabajador" selected>Artesanos / Taller</option>
+                    <option value="vendedor">Vendedores</option>
+                    <option value="admin">Administradores</option>
+                </select>
+            </div>
+            <div>
+                <select id="filtro-tipo-pago">
+                    <option value="">Todas las modalidades</option>
+                    <option value="por_unidad">Pago por Unidad</option>
+                    <option value="por_hora">Pago por Hora</option>
+                </select>
+            </div>
+            <button class="btn btn-secondary btn-icon" id="btn-limpiar-filtros-trabajador" title="Recargar">🔄</button>
+        </div>
+    </div>
+
+    <!-- Tabla de Trabajadores -->
+    <div class="card">
+        <div class="tabla-contenedor">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre / Artesano</th>
+                        <th>Teléfono</th>
+                        <th>Rol</th>
+                        <th>Modalidad de Pago</th>
+                        <th>Tarifa Configurada</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="trabajadores-tbody">
+                    <tr>
+                        <td colspan="7" class="text-center py-4">
+                            <div class="spinner"></div>
+                            <p class="mt-1 text-muted">Cargando personal del taller...</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Crear / Editar Trabajador -->
+<div class="modal-overlay hidden" id="modal-trabajador">
+    <div class="modal" style="max-width: 580px;">
+        <div class="modal-header">
+            <h3 id="modal-trabajador-titulo">Nuevo Trabajador / Artesano</h3>
+        </div>
+        <form id="form-trabajador">
+            <div class="modal-body">
+                <input type="hidden" id="trabajador-id" name="id">
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="trab-nombre">Nombre Completo *</label>
+                        <input type="text" id="trab-nombre" name="nombre" placeholder="Ej. Mateo Morales" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="trab-telefono">Teléfono / Celular</label>
+                        <input type="tel" id="trab-telefono" name="telefono" placeholder="Ej. 310 123 4567">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="trab-rol">Rol en el Negocio *</label>
+                        <select id="trab-rol" name="rol" required>
+                            <option value="trabajador" selected>🔨 Artesano / Confección de Cuero</option>
+                            <option value="vendedor">🛒 Vendedor de Mostrador</option>
+                            <option value="admin">👑 Administrador</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="trab-tipo-pago">Modalidad de Remuneración *</label>
+                        <select id="trab-tipo-pago" name="tipo_pago" required>
+                            <option value="por_unidad">📦 Por Unidad Terminada</option>
+                            <option value="por_hora">⏱️ Por Horas Trabajadas</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="trab-tarifa-unidad">Tarifa por Unidad Fabricada ($)</label>
+                        <input type="number" id="trab-tarifa-unidad" name="tarifa_unidad" min="0" step="500" placeholder="Ej. 15000">
+                        <small class="text-muted">Monto que gana por cada cinturón, montura o bolso terminado.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="trab-tarifa-hora">Tarifa por Hora Trabajada ($)</label>
+                        <input type="number" id="trab-tarifa-hora" name="tarifa_hora" min="0" step="500" placeholder="Ej. 18000">
+                        <small class="text-muted">Aplica cuando la confección se mide por tiempo.</small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="trab-activo" name="activo" checked style="width: auto; margin-right: 6px;">
+                        Trabajador activo en el taller (disponible para asignarle órdenes de trabajo)
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="btn-cancelar-trabajador">Cancelar</button>
+                <button type="submit" class="btn btn-primary" id="btn-guardar-trabajador">💾 Guardar Trabajador</button>
+            </div>
+        </form>
+    </div>
+</div>

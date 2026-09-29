@@ -1,0 +1,140 @@
+﻿<div class="modulo-pagos">
+    <div class="page-header">
+        <div>
+            <h1>💰 Liquidación de Pagos a Trabajadores</h1>
+            <p class="text-muted">Registro automático de remuneraciones por mano de obra (horas o unidades terminadas) calculado por triggers de base de datos.</p>
+        </div>
+        <div class="btn-group">
+            <a href="#/productividad" class="btn btn-secondary">🔨 Ir a Productividad</a>
+        </div>
+    </div>
+
+    <!-- Tarjetas de Resumen Financiero -->
+    <div class="stats-grid mb-2" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--space-lg);">
+        <div class="stat-card">
+            <div class="stat-valor" id="stat-total-liquidado">$0</div>
+            <div class="stat-label">TOTAL GENERADO</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-valor text-warning" id="stat-total-pendiente">$0</div>
+            <div class="stat-label">PENDIENTE POR PAGAR</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-valor text-success" id="stat-total-pagado">$0</div>
+            <div class="stat-label">TOTAL YA PAGADO</div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card mb-1">
+        <div class="filtros-bar">
+            <div id="filtro-trabajador-contenedor" style="min-width: 200px;">
+                <select id="filtro-trabajador">
+                    <option value="">Todos los trabajadores</option>
+                </select>
+            </div>
+            <div>
+                <select id="filtro-estado-pago">
+                    <option value="">Todos los estados</option>
+                    <option value="pendiente" selected>Solo Pendientes</option>
+                    <option value="pagado">Ya Pagados</option>
+                </select>
+            </div>
+            <div>
+                <input type="date" id="filtro-fecha-desde" title="Desde">
+            </div>
+            <div>
+                <input type="date" id="filtro-fecha-hasta" title="Hasta">
+            </div>
+            <button class="btn btn-secondary btn-icon" id="btn-limpiar-filtros-pagos" title="Limpiar filtros">🔄</button>
+        </div>
+    </div>
+
+    <!-- Tabla de Pagos -->
+    <div class="card">
+        <div class="tabla-contenedor">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Trabajador</th>
+                        <th>Lote / Producto</th>
+                        <th>Modalidad</th>
+                        <th>Detalle de Cálculo</th>
+                        <th>Monto Liquidado</th>
+                        <th>Estado</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody id="pagos-tbody">
+                    <tr>
+                        <td colspan="8" class="text-center py-4">
+                            <div class="spinner"></div>
+                            <p class="mt-1 text-muted">Cargando registros de pagos...</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="paginacion-pagos"></div>
+    </div>
+</div>
+
+<!-- Modal Comprobante de Pago para Imprimir -->
+<div class="modal-overlay hidden" id="modal-comprobante-pago">
+    <div class="modal" style="max-width: 500px;">
+        <div class="modal-header">
+            <h3>🧾 Recibo de Pago de Mano de Obra</h3>
+        </div>
+        <div class="modal-body" id="comprobante-imprimible">
+            <div style="text-align: center; border-bottom: 2px dashed var(--color-border); padding-bottom: var(--space-md); margin-bottom: var(--space-md);">
+                <h2 style="font-size: 1.3rem; margin-bottom: 4px;">TalabartApp — Taller Artesanal</h2>
+                <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 0;">Comprobante de Liquidación de Trabajador</p>
+            </div>
+
+            <div class="info-grid mb-1">
+                <div class="info-item">
+                    <div class="info-label">TRABAJADOR</div>
+                    <div class="info-valor" id="comp-trabajador">—</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">FECHA</div>
+                    <div class="info-valor" id="comp-fecha">—</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">PRODUCTO ELABORADO</div>
+                    <div class="info-valor" id="comp-producto">—</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">TIPO REMUNERACIÓN</div>
+                    <div class="info-valor" id="comp-tipo">—</div>
+                </div>
+            </div>
+
+            <div style="background: var(--color-surface-2); padding: var(--space-md); border-radius: var(--radius-md); margin-bottom: var(--space-md); border: 1px solid var(--color-border);">
+                <div class="info-label" style="margin-bottom: 4px;">CÁLCULO AUTOMÁTICO:</div>
+                <div id="comp-detalle-calculo" style="font-size: 0.95rem; font-family: var(--font-mono);">—</div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: var(--space-md); background: var(--color-surface-3); border-radius: var(--radius-md);">
+                <span style="font-weight: 600;">TOTAL A PAGAR:</span>
+                <span id="comp-monto" style="font-size: 1.4rem; font-weight: 700; color: var(--color-secondary);">—</span>
+            </div>
+
+            <div style="margin-top: var(--space-xl); border-top: 1px solid var(--color-border); padding-top: var(--space-lg); display: flex; justify-content: space-around; text-align: center;">
+                <div>
+                    <div style="width: 150px; border-bottom: 1px solid var(--color-text-muted); margin-bottom: 4px;"></div>
+                    <span style="font-size: 0.75rem; color: var(--color-text-muted);">Firma Administrador</span>
+                </div>
+                <div>
+                    <div style="width: 150px; border-bottom: 1px solid var(--color-text-muted); margin-bottom: 4px;"></div>
+                    <span style="font-size: 0.75rem; color: var(--color-text-muted);">Firma Trabajador</span>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" id="btn-cerrar-comprobante">Cerrar</button>
+            <button type="button" class="btn btn-primary" id="btn-imprimir-recibo">🖨️ Imprimir</button>
+        </div>
+    </div>
+</div>

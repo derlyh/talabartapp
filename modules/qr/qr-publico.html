@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuenta de Cobro — TalabartApp</title>
+    <link rel="stylesheet" href="../../css/global.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <!-- Supabase JS SDK CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            background-color: var(--color-bg);
+            padding: var(--space-md);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        .recibo-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 520px;
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            margin: var(--space-md) auto;
+        }
+        .recibo-header {
+            background: linear-gradient(135deg, var(--color-primary-dark), var(--color-primary));
+            padding: var(--space-xl);
+            text-align: center;
+            color: white;
+            border-bottom: 3px solid var(--color-secondary);
+        }
+        .recibo-header h1 {
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: var(--space-xs);
+        }
+        .recibo-body {
+            padding: var(--space-xl);
+        }
+        .banco-card {
+            background: var(--color-surface-2);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+        .banco-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--space-xs);
+            font-size: 0.88rem;
+        }
+        .banco-item:last-child { margin-bottom: 0; }
+        .banco-label { color: var(--color-text-muted); }
+        .banco-valor { font-weight: 600; font-family: var(--font-mono); }
+    </style>
+</head>
+<body>
+
+<div class="recibo-card" id="recibo-contenedor">
+    <div class="recibo-header">
+        <div style="font-size: 2.8rem; margin-bottom: var(--space-xs);">🐴</div>
+        <h1>Talabartería Artesanal</h1>
+        <p style="opacity: 0.9; font-size: 0.9rem; margin-bottom: 0;">Comprobante de Cuenta y Pago</p>
+    </div>
+
+    <div class="recibo-body" id="contenido-cargando">
+        <div class="loading-contenedor">
+            <div class="spinner spinner-lg"></div>
+            <p>Cargando información de la cuenta...</p>
+        </div>
+    </div>
+
+    <div class="recibo-body hidden" id="contenido-cuenta">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-lg); border-bottom: 1px solid var(--color-border); padding-bottom: var(--space-md);">
+            <div>
+                <span class="text-muted" style="font-size: 0.8rem;">ESTADO</span>
+                <div id="cuenta-estado-badge" style="margin-top: 4px;"></div>
+            </div>
+            <div style="text-align: right;">
+                <span class="text-muted" style="font-size: 0.8rem;">FECHA</span>
+                <div id="cuenta-fecha" style="font-weight: 600; font-size: 0.9rem;">—</div>
+            </div>
+        </div>
+
+        <div class="info-grid mb-1">
+            <div class="info-item">
+                <div class="info-label">CLIENTE</div>
+                <div class="info-valor" id="cuenta-cliente">—</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">TELÉFONO</div>
+                <div class="info-valor" id="cuenta-telefono">—</div>
+            </div>
+        </div>
+
+        <h4 style="margin-bottom: var(--space-sm); font-size: 1rem;">Detalle de la Compra</h4>
+        <div class="tabla-contenedor mb-1">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th style="text-align: center;">Cant.</th>
+                        <th style="text-align: right;">Precio</th>
+                        <th style="text-align: right;">Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody id="cuenta-items-tbody"></tbody>
+            </table>
+        </div>
+
+        <div style="background: var(--color-surface-2); padding: var(--space-md); border-radius: var(--radius-md); border: 1px solid var(--color-border); margin-bottom: var(--space-xl);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 1.1rem; font-weight: 600;">TOTAL A PAGAR:</span>
+                <span id="cuenta-total" style="font-size: 1.5rem; font-weight: 700; color: var(--color-secondary);">—</span>
+            </div>
+        </div>
+
+        <h4 style="margin-bottom: var(--space-sm); font-size: 1rem;">💳 Medios de Pago Disponibles</h4>
+        <div class="banco-card" id="bancos-contenedor">
+            <div class="text-center text-muted"><small>Cargando información de cuentas...</small></div>
+        </div>
+
+        <div class="text-center mt-1">
+            <a href="#" id="btn-notificar-whatsapp" target="_blank" class="btn btn-success btn-lg" style="width: 100%; justify-content: center;">
+                💬 Reportar Pago por WhatsApp
+            </a>
+            <p class="text-muted mt-1" style="font-size: 0.8rem; margin-bottom: 0;">
+                Envía el comprobante de transferencia bancaria por WhatsApp para confirmar tu pedido.
+            </p>
+        </div>
+    </div>
+
+    <div class="recibo-body hidden" id="contenido-error">
+        <div class="empty-state">
+            <div class="empty-icono">⚠️</div>
+            <h3>Cuenta no encontrada</h3>
+            <p class="text-muted" id="mensaje-error">El código de cuenta ingresado no es válido o ha expirado.</p>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { SUPABASE_URL, SUPABASE_ANON_KEY, APP_CONFIG } from '../../js/config.js';
+    const { createClient } = supabase;
+    const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    function formatMoneda(val) {
+        return new Intl.NumberFormat(APP_CONFIG.formatoFecha || 'es-CO', {
+            style: 'currency',
+            currency: APP_CONFIG.moneda || 'COP',
+            minimumFractionDigits: 0
+        }).format(val || 0);
+    }
+
+    async function cargarDetalleCuenta() {
+        const params = new URLSearchParams(window.location.search);
+        const cuentaId = params.get('cuenta');
+
+        const cargando = document.getElementById('contenido-cargando');
+        const contenido = document.getElementById('contenido-cuenta');
+        const errorDiv = document.getElementById('contenido-error');
+
+        if (!cuentaId) {
+            cargando.classList.add('hidden');
+            errorDiv.classList.remove('hidden');
+            return;
+        }
+
+        try {
+            // Cargar cuenta de cobro con venta asociada
+            const { data: cuenta, error } = await db
+                .from('cuentas_cobro')
+                .select(`
+                    id,
+                    monto,
+                    estado,
+                    created_at,
+                    ventas (
+                        id,
+                        fecha,
+                        total,
+                        estado,
+                        clientes (nombre, telefono, email),
+                        detalle_ventas (
+                            cantidad,
+                            precio_unit,
+                            subtotal,
+                            productos (nombre)
+                        )
+                    )
+                `)
+                .eq('id', cuentaId)
+                .single();
+
+            if (error || !cuenta) {
+                throw error || new Error('No existe la cuenta solicitada');
+            }
+
+            // Renderizar datos
+            cargando.classList.add('hidden');
+            contenido.classList.remove('hidden');
+
+            const venta = cuenta.ventas;
+            const cliente = venta?.clientes;
+
+            document.getElementById('cuenta-cliente').textContent = cliente?.nombre || 'Cliente Ocasional';
+            document.getElementById('cuenta-telefono').textContent = cliente?.telefono || '—';
+            document.getElementById('cuenta-fecha').textContent = new Date(cuenta.created_at).toLocaleDateString('es-CO');
+            document.getElementById('cuenta-total').textContent = formatMoneda(cuenta.monto);
+
+            const badgeEstado = document.getElementById('cuenta-estado-badge');
+            if (cuenta.estado === 'pagada') {
+                badgeEstado.innerHTML = '<span class="badge badge-pagada">PAGADA</span>';
+            } else {
+                badgeEstado.innerHTML = '<span class="badge badge-pendiente">PENDIENTE DE PAGO</span>';
+            }
+
+            // Detalle de productos
+            const tbody = document.getElementById('cuenta-items-tbody');
+            tbody.innerHTML = '';
+            const items = venta?.detalle_ventas || [];
+            items.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${item.productos?.nombre || 'Producto'}</strong></td>
+                    <td style="text-align:center;">${item.cantidad}</td>
+                    <td style="text-align:right;">${formatMoneda(item.precio_unit)}</td>
+                    <td style="text-align:right; font-weight:600;">${formatMoneda(item.subtotal)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // Enlace de WhatsApp
+            const telWhatsApp = '573101234567'; // Número de la talabartería
+            const mensaje = encodeURIComponent(`Hola Talabartería, adjunto comprobante de pago para la Cuenta #${cuenta.id.slice(0, 8)} por un total de ${formatMoneda(cuenta.monto)}. Cliente: ${cliente?.nombre || ''}`);
+            document.getElementById('btn-notificar-whatsapp').href = `https://wa.me/${telWhatsApp}?text=${mensaje}`;
+
+            // Cargar configuración de cuentas
+            try {
+                const { data: config } = await db.from('configuraciones').select('valor').eq('clave', 'cuentas_bancarias').single();
+                let cuentas = [];
+                if (config && config.valor) {
+                    cuentas = config.valor;
+                } else {
+                    cuentas = [
+                        { banco: "Bancolombia Ahorros", numero: "987-654321-00" },
+                        { banco: "Nequi / Daviplata", numero: "310 123 4567" },
+                        { banco: "Titular", numero: "Talabartería de Cuero S.A.S" }
+                    ];
+                }
+                const bancosContainer = document.getElementById('bancos-contenedor');
+                bancosContainer.innerHTML = '';
+                cuentas.forEach(c => {
+                    bancosContainer.innerHTML += `
+                    <div class="banco-item">
+                        <span class="banco-label">${c.banco}:</span>
+                        <span class="banco-valor">${c.numero}</span>
+                    </div>
+                    `;
+                });
+            } catch(e) {
+                console.error('Error cargando bancos', e);
+            }
+
+        } catch (err) {
+            console.error(err);
+            cargando.classList.add('hidden');
+            errorDiv.classList.remove('hidden');
+            document.getElementById('mensaje-error').textContent = err.message || 'Error al consultar la cuenta.';
+        }
+    }
+
+    cargarDetalleCuenta();
+</script>
+
+</body>
+</html>

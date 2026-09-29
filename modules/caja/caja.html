@@ -1,0 +1,164 @@
+<div class="modulo-header">
+    <div>
+        <h2>💵 Caja Diaria y Arqueo</h2>
+        <p class="text-muted">Control de efectivo, ingresos, egresos y cierre de caja.</p>
+    </div>
+    <div class="header-actions">
+        <button class="btn btn-primary" id="btn-abrir-caja">
+            <span>➕</span> Abrir Caja
+        </button>
+        <button class="btn btn-danger" id="btn-cerrar-caja" style="display: none;">
+            <span>🔒</span> Cerrar Caja
+        </button>
+    </div>
+</div>
+
+<div class="caja-estado-card card" id="caja-activa-info" style="display: none; margin-bottom: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+        <div>
+            <h3 style="margin: 0; color: var(--color-primary);">Caja Abierta</h3>
+            <p class="text-muted" style="margin: 5px 0 0;" id="caja-fecha-apertura">Apertura: --</p>
+        </div>
+        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <div class="stat-item">
+                <span class="text-muted" style="font-size: 0.8rem;">Monto Inicial</span>
+                <strong style="font-size: 1.2rem; display: block;" id="stat-inicial">$0</strong>
+            </div>
+            <div class="stat-item">
+                <span class="text-muted" style="font-size: 0.8rem;">Ventas (Efectivo)</span>
+                <strong style="font-size: 1.2rem; display: block; color: var(--color-success);" id="stat-ventas">$0</strong>
+            </div>
+            <div class="stat-item">
+                <span class="text-muted" style="font-size: 0.8rem;">Egresos</span>
+                <strong style="font-size: 1.2rem; display: block; color: var(--color-danger);" id="stat-egresos">$0</strong>
+            </div>
+            <div class="stat-item" style="border-left: 2px solid var(--color-border); padding-left: 15px;">
+                <span class="text-muted" style="font-size: 0.8rem;">Saldo Esperado</span>
+                <strong style="font-size: 1.4rem; display: block; color: var(--color-primary);" id="stat-esperado">$0</strong>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toolbar" id="caja-toolbar" style="display: none;">
+    <button class="btn btn-outline" id="btn-nuevo-ingreso"><span>💰</span> Ingreso Extra</button>
+    <button class="btn btn-outline" id="btn-nuevo-egreso"><span>💸</span> Registrar Egreso</button>
+</div>
+
+<div class="card" style="margin-top: 20px;">
+    <h3>Movimientos de la Caja Actual</h3>
+    <div class="table-responsive">
+        <table class="table" id="tabla-movimientos">
+            <thead>
+                <tr>
+                    <th>Hora</th>
+                    <th>Tipo</th>
+                    <th>Concepto</th>
+                    <th>Monto</th>
+                    <th>Usuario</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td colspan="5" class="text-center">No hay caja abierta o no hay movimientos.</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card" style="margin-top: 20px;">
+    <h3>Historial de Cajas Cerradas</h3>
+    <div class="table-responsive">
+        <table class="table" id="tabla-historial-cajas">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Estado</th>
+                    <th>Monto Inicial</th>
+                    <th>Saldo Real</th>
+                    <th>Diferencia</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td colspan="6" class="text-center text-muted">Cargando historial...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal Abrir Caja -->
+<div class="modal" id="modal-abrir-caja">
+    <div class="modal-content" style="max-width: 400px;">
+        <div class="modal-header">
+            <h3>Abrir Caja</h3>
+            <button class="modal-close" id="btn-cerrar-modal-abrir">×</button>
+        </div>
+        <div class="modal-body">
+            <form id="form-abrir-caja">
+                <div class="form-group">
+                    <label>Monto Inicial en Efectivo (Base)</label>
+                    <input type="number" name="monto_inicial" class="form-control" value="0" min="0" step="100" required>
+                </div>
+                <div class="form-group">
+                    <label>Notas Adicionales</label>
+                    <textarea name="notas" class="form-control" rows="2"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Confirmar Apertura</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Cerrar Caja -->
+<div class="modal" id="modal-cerrar-caja">
+    <div class="modal-content" style="max-width: 450px;">
+        <div class="modal-header">
+            <h3>Cerrar Caja (Arqueo)</h3>
+            <button class="modal-close" id="btn-cerrar-modal-cerrar">×</button>
+        </div>
+        <div class="modal-body">
+            <form id="form-cerrar-caja">
+                <div class="alert alert-info" style="margin-bottom: 15px;">
+                    <strong>Saldo Esperado en Sistema:</strong> <span id="arqueo-esperado">$0</span>
+                </div>
+                <div class="form-group">
+                    <label>Efectivo Real en Caja (Conteos de Billetes y Monedas)</label>
+                    <input type="number" name="saldo_real" id="input-saldo-real" class="form-control" required min="0" step="100">
+                </div>
+                <div class="form-group">
+                    <label>Diferencia:</label>
+                    <div id="arqueo-diferencia" style="font-weight: bold; font-size: 1.1rem; color: var(--color-text);">0</div>
+                </div>
+                <div class="form-group">
+                    <label>Notas de Cierre (Justificación de diferencia si aplica)</label>
+                    <textarea name="notas_cierre" class="form-control" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-danger btn-block">Confirmar Cierre de Caja</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Movimiento -->
+<div class="modal" id="modal-movimiento">
+    <div class="modal-content" style="max-width: 400px;">
+        <div class="modal-header">
+            <h3 id="modal-movimiento-titulo">Registrar Movimiento</h3>
+            <button class="modal-close" id="btn-cerrar-modal-movimiento">×</button>
+        </div>
+        <div class="modal-body">
+            <form id="form-movimiento">
+                <input type="hidden" name="tipo" id="movimiento-tipo">
+                <div class="form-group">
+                    <label>Concepto / Descripción</label>
+                    <input type="text" name="concepto" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Monto</label>
+                    <input type="number" name="monto" class="form-control" required min="50" step="50">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Guardar Movimiento</button>
+            </form>
+        </div>
+    </div>
+</div>
