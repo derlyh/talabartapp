@@ -410,7 +410,7 @@ export async function init() {
                 if (errVenta) throw errVenta;
 
                 const qrPayload = JSON.stringify({
-                    sistema: 'TalabartApp',
+                    sistema: 'Talabartería El Rodeo',
                     venta_id: venta.id,
                     monto: venta.total,
                     fecha: new Date().toISOString()
@@ -1064,7 +1064,7 @@ export async function initNuevaVenta() {
             if (metodoPago === 'qr') {
                 const totalCalculado = carrito.reduce((acc, i) => acc + (i.cantidad * i.producto.precio), 0);
                 const qrPayload = JSON.stringify({
-                    sistema: 'TalabartApp',
+                    sistema: 'Talabartería El Rodeo',
                     venta_id: nuevaVenta.id,
                     monto: totalCalculado,
                     metodo: 'qr',

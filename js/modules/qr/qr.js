@@ -351,7 +351,7 @@ function compartirWhatsapp() {
     const cliente = cuentaSeleccionada.ventas?.clientes?.nombre || 'Cliente';
     const monto = formatMoneda(cuentaSeleccionada.monto);
 
-    const texto = encodeURIComponent(`Hola ${cliente}, aquí tienes el enlace para ver y realizar el pago de tu cuenta en TalabartApp por ${monto}: ${urlPublica}`);
+    const texto = encodeURIComponent(`Hola ${cliente}, aquí tienes el enlace para ver y realizar el pago de tu cuenta en Talabartería El Rodeo por ${monto}: ${urlPublica}`);
     window.open(`https://wa.me/?text=${texto}`, '_blank');
 }
 

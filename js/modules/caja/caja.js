@@ -143,7 +143,10 @@ async function cargarMovimientosCaja(cajaId) {
                         ${mov.tipo.toUpperCase()}
                     </span>
                 </td>
-                <td>${mov.concepto}</td>
+                <td>
+                    <strong>${mov.concepto}</strong>
+                    ${mov.categoria ? `<div style="font-size:0.75rem; color:var(--color-secondary);">🏷️ ${mov.categoria}</div>` : ''}
+                </td>
                 <td style="color: ${mov.tipo === 'ingreso' ? 'var(--color-success)' : 'var(--color-danger)'}; font-weight: bold;">
                     ${mov.tipo === 'ingreso' ? '+' : '-'}${formatMoneda(mov.monto)}
                 </td>
@@ -204,6 +207,7 @@ async function registrarMovimiento(data) {
                 caja_id: cajaActiva.id,
                 tipo: data.tipo,
                 concepto: data.concepto,
+                categoria: data.categoria || null,
                 monto: monto,
                 usuario_id: perfil?.id
             }]);

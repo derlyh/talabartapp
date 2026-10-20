@@ -67,6 +67,12 @@ async function manejarRuta() {
         return;
     }
 
+    // Si ya está autenticado y accede a /login, redirigir a dashboard
+    if (ruta === '/login' && getUsuario()) {
+        navegar('/dashboard');
+        return;
+    }
+
     const config = rutas[ruta];
 
     if (!config) {
@@ -75,7 +81,7 @@ async function manejarRuta() {
     }
 
     // Actualizar título
-    document.title = `${config.titulo} | TalabartApp`;
+    document.title = `${config.titulo} | Talabartería El Rodeo`;
 
     // Actualizar navegación activa en sidebar
     document.querySelectorAll('.nav-link').forEach(link => {

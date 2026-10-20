@@ -1,5 +1,5 @@
 import { initRouter, registrarRuta, navegar } from './router.js';
-import { getUsuario, getPerfil, getRol, cambiarRolActivo, initAuth, tieneRol } from './auth.js';
+import { getUsuario, getPerfil, getRol, cambiarRolActivo, initAuth, tieneRol, logout } from './auth.js';
 import { mostrarNotificacion } from './utils.js';
 
 // ============================================================
@@ -152,13 +152,12 @@ async function iniciarApp() {
         });
     }
 
-    // Configurar selector rápido de rol
-    const selectorRol = document.getElementById('selector-rol-rapido');
-    if (selectorRol) {
-        selectorRol.value = getRol() || 'admin';
-        selectorRol.addEventListener('change', (e) => {
-            cambiarRolActivo(e.target.value);
-            mostrarNotificacion(`Modo cambiado a: ${e.target.selectedOptions[0].text}`, 'info');
+    // Configurar botón cerrar sesión
+    const btnLogout = document.getElementById('btn-cerrar-sesion');
+    if (btnLogout) {
+        btnLogout.addEventListener('click', async () => {
+            await logout();
+            mostrarNotificacion('Sesión cerrada correctamente', 'info');
         });
     }
 
@@ -190,12 +189,17 @@ function actualizarSidebar() {
         const avatar = document.getElementById('user-avatar');
         const nombre = document.getElementById('user-nombre');
         const rol = document.getElementById('user-rol');
-        const selector = document.getElementById('selector-rol-rapido');
 
         if (avatar) avatar.textContent = perfil.nombre?.charAt(0)?.toUpperCase() || 'A';
         if (nombre) nombre.textContent = perfil.nombre || 'Administrador';
-        if (rol) rol.textContent = `Rol: ${perfil.rol}`;
-        if (selector && selector.value !== perfil.rol) selector.value = perfil.rol;
+        if (rol) {
+            const rolesLabels = {
+                admin: '👑 Administrador',
+                vendedor: '🛒 Mostrador / Ventas',
+                trabajador: '🔨 Maestro Artesano'
+            };
+            rol.textContent = rolesLabels[perfil.rol] || perfil.rol || 'En turno';
+        }
     }
 
     // Adaptar secciones visibles según rol

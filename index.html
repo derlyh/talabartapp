@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TalabartApp — Sistema de Gestión</title>
+    <title>Talabartería El Rodeo — Taller & Almacén de Marroquinería</title>
 
     <!-- CSS -->
     <link rel="stylesheet" href="css/global.css">
@@ -26,76 +26,75 @@
         <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <span style="font-size:1.8rem;">🐴</span>
-                <div>
-                    <h1 style="font-size: 1.15rem; margin-bottom: 0;">TalabartApp</h1>
-                    <small class="text-muted" style="font-size: 0.75rem;">Taller de Cuero</small>
+                <div style="width: 42px; height: 42px; border-radius: var(--radius-md); background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark)); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; border: 1px solid var(--color-secondary); box-shadow: 0 2px 8px rgba(0,0,0,0.3); flex-shrink: 0;">
+                    🐴
+                </div>
+                <div style="min-width: 0;">
+                    <h1 style="font-size: 1.02rem; margin-bottom: 0; font-weight: 700; color: #fff; letter-spacing: -0.2px; line-height: 1.2;">Talabartería El Rodeo</h1>
+                    <div style="font-size: 0.70rem; color: var(--color-secondary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Taller & Almacén de Cuero</div>
                 </div>
             </div>
 
             <nav class="sidebar-nav">
                 <div class="nav-section">
-                    <div class="nav-section-title">General</div>
+                    <div class="nav-section-title">Panel de Control</div>
                     <a href="#/dashboard" class="nav-link">
-                        <span class="nav-icono">📊</span> Dashboard
+                        <span class="nav-icono">📊</span> Tablero del Taller
                     </a>
                 </div>
 
                 <div class="nav-section" id="nav-operaciones">
-                    <div class="nav-section-title">Operaciones</div>
-                    <a href="#/inventario" class="nav-link">
-                        <span class="nav-icono">📦</span> Inventario
+                    <div class="nav-section-title">Mostrador & Ventas</div>
+                    <a href="#/nueva-venta" class="nav-link">
+                        <span class="nav-icono">➕</span> Punto de Venta (POS)
                     </a>
                     <a href="#/ventas" class="nav-link">
-                        <span class="nav-icono">🛒</span> Ventas
-                    </a>
-                    <a href="#/nueva-venta" class="nav-link">
-                        <span class="nav-icono">➕</span> Nueva Venta (POS)
-                    </a>
-                    <a href="#/clientes" class="nav-link">
-                        <span class="nav-icono">👥</span> Clientes
-                    </a>
-                    <a href="#/qr" class="nav-link">
-                        <span class="nav-icono">📱</span> Cobro QR
+                        <span class="nav-icono">🛒</span> Historial de Ventas
                     </a>
                     <a href="#/caja" class="nav-link">
-                        <span class="nav-icono">💵</span> Caja
+                        <span class="nav-icono">💵</span> Control de Caja Diaria
+                    </a>
+                    <a href="#/qr" class="nav-link">
+                        <span class="nav-icono">📱</span> Cobro QR Bancario
+                    </a>
+                    <a href="#/clientes" class="nav-link">
+                        <span class="nav-icono">👥</span> Directorio de Clientes
                     </a>
                 </div>
 
                 <div class="nav-section" id="nav-produccion">
-                    <div class="nav-section-title">Producción Artesanal</div>
+                    <div class="nav-section-title">Taller & Confección</div>
+                    <a href="#/inventario" class="nav-link">
+                        <span class="nav-icono">📦</span> Inventario & Cueros
+                    </a>
                     <a href="#/productividad" class="nav-link">
-                        <span class="nav-icono">🔨</span> Productividad
+                        <span class="nav-icono">🔨</span> Confección & Lotes
                     </a>
                     <a href="#/pagos" class="nav-link">
-                        <span class="nav-icono">💰</span> Liquidación Pagos
+                        <span class="nav-icono">💰</span> Liquidación y Nómina
                     </a>
                     <a href="#/trabajadores" class="nav-link">
-                        <span class="nav-icono">🧑‍🏭</span> Trabajadores
+                        <span class="nav-icono">🧑‍🏭</span> Maestros Artesanos
                     </a>
                 </div>
             </nav>
 
-            <!-- Footer del Sidebar con Selector Rápido de Rol -->
+            <!-- Perfil en el pie del Sidebar -->
             <div class="sidebar-footer" id="sidebar-footer" style="flex-direction: column; align-items: stretch; gap: var(--space-xs);">
-                <div style="display: flex; align-items: center; gap: var(--space-sm); margin-bottom: 4px;">
-                    <div class="avatar" id="user-avatar" style="width: 30px; height: 30px; font-size: 0.8rem;">A</div>
+                <div style="display: flex; align-items: center; gap: var(--space-sm); width: 100%;">
+                    <div class="avatar" id="user-avatar" style="width: 36px; height: 36px; font-size: 0.95rem; background: var(--color-primary); color: white; border: 1.5px solid var(--color-secondary); font-weight: 700; flex-shrink: 0;">A</div>
                     <div class="user-info" style="min-width: 0; flex: 1;">
-                        <div class="user-nombre" id="user-nombre" style="font-size: 0.82rem; font-weight: 600;">Administrador</div>
-                        <div class="user-rol text-muted" id="user-rol" style="font-size: 0.7rem;">Control Total</div>
+                        <div class="user-nombre" id="user-nombre" style="font-size: 0.88rem; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Administrador</div>
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--color-success);"></span>
+                            <span class="user-rol text-muted" id="user-rol" style="font-size: 0.72rem; font-weight: 500;">En turno</span>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Selector de Rol al vuelo -->
-                <div>
-                    <label for="selector-rol-rapido" style="font-size: 0.7rem; color: var(--color-text-muted); margin-bottom: 2px;">Cambiar Rol de Prueba:</label>
-                    <select id="selector-rol-rapido" style="font-size: 0.8rem; padding: 4px 8px; background: var(--color-surface-2); border-color: var(--color-border); height: auto;">
-                        <option value="admin">👑 Administrador</option>
-                        <option value="vendedor">🛒 Vendedor</option>
-                        <option value="trabajador">🔨 Artesano</option>
-                    </select>
-                </div>
+                <button id="btn-cerrar-sesion" class="btn btn-sm btn-secondary" style="width: 100%; justify-content: center; font-size: 0.78rem; padding: 6px 10px; margin-top: var(--space-xs); border-color: var(--color-border); background: var(--color-surface-2);">
+                    🚪 Cerrar Sesión
+                </button>
             </div>
         </aside>
 
@@ -103,7 +102,7 @@
         <main class="main-content" id="app-content">
             <div class="loading-contenedor">
                 <div class="spinner spinner-lg"></div>
-                <p>Cargando TalabartApp...</p>
+                <p>Cargando Talabartería El Rodeo...</p>
             </div>
         </main>
 

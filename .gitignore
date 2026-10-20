@@ -1,0 +1,17 @@
+# Variables de entorno locales
+.env
+.env.local
+.env.*.local
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs y temporales
+*.log
+npm-debug.log*
+
+# Dependencias (si se agregan herramientas Node)
+node_modules/
+dist/

@@ -852,32 +852,66 @@ tbody tr:last-child td {
         top: 0;
         width: 100%;
         background: white !important;
-        color: black !important;
+        color: #111 !important;
     }
     #modal-detalle .modal {
         background: white !important;
-        color: black !important;
+        color: #111 !important;
         border: none !important;
         box-shadow: none !important;
         max-width: 100% !important;
         width: 100% !important;
+        padding: 0 !important;
     }
     #modal-detalle .modal-footer,
     #modal-detalle .modal-cerrar,
     #modal-detalle .btn {
         display: none !important;
     }
+    #modal-detalle .comprobante-encabezado-taller {
+        border-bottom: 2px dashed #333 !important;
+        color: #111 !important;
+    }
+    #modal-detalle .comprobante-encabezado-taller h2 {
+        color: #000 !important;
+    }
     #modal-detalle .info-grid {
-        background: #f5f5f5 !important;
-        color: black !important;
+        background: #f8f9fa !important;
+        color: #111 !important;
+        border: 1px solid #e2e8f0 !important;
+    }
+    #modal-detalle .info-item .info-label {
+        color: #666 !important;
+    }
+    #modal-detalle .info-item .info-valor {
+        color: #000 !important;
     }
     #modal-detalle th {
-        background: #eee !important;
-        color: black !important;
+        background: #f1f5f9 !important;
+        color: #000 !important;
+        border-bottom: 2px solid #cbd5e1 !important;
     }
     #modal-detalle td {
-        color: black !important;
-        border-color: #ddd !important;
+        color: #111 !important;
+        border-color: #e2e8f0 !important;
+    }
+    #modal-detalle .totales-card {
+        background: #f8f9fa !important;
+        border: 1px solid #cbd5e1 !important;
+        color: #000 !important;
+    }
+    #modal-detalle .total-linea.total-destacado {
+        color: #000 !important;
+        border-top: 1px solid #333 !important;
+    }
+    #modal-detalle .comprobante-pie-garantia {
+        background: #fff8f0 !important;
+        border: 1px dashed #d97706 !important;
+        color: #451a03 !important;
+    }
+    #modal-detalle .comprobante-pie-garantia strong {
+        color: #92400e !important;
     }
 }
+
 

@@ -224,7 +224,7 @@
                     <div class="form-row">
                         <div class="form-group" style="flex: 2;">
                             <label for="producto-nombre">Nombre del Producto *</label>
-                            <input type="text" id="producto-nombre" name="nombre" required placeholder="Ej: Montura Charra de Cuero" maxlength="150">
+                            <input type="text" id="producto-nombre" name="nombre" required placeholder="Ej: Cinturón Vaqueta 40mm Hebilla Bronce" maxlength="150">
                         </div>
                         <div class="form-group" style="flex: 1;">
                             <label for="producto-categoria">Categoría</label>
@@ -234,9 +234,39 @@
                         </div>
                     </div>
 
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 1;">
+                            <label for="producto-tipo-cuero">Tipo de Cuero / Acabado</label>
+                            <select id="producto-tipo-cuero" name="tipo_cuero">
+                                <option value="">Seleccionar tipo de material...</option>
+                                <option value="Vaqueta Vegetal">🐂 Vaqueta Vegetal (Gruesa / Rígida)</option>
+                                <option value="Cuero Graso">✨ Cuero Graso (Pull-Up / Rústico)</option>
+                                <option value="Badana / Napa">🐑 Badana / Napa (Suave / Forros)</option>
+                                <option value="Carnaza / Nobuck">🧤 Carnaza / Gamuzado / Nobuck</option>
+                                <option value="Cuero Trenzado">🪢 Cuero Trenzado / Teñido a mano</option>
+                                <option value="Herrajes / Químico">🔩 Insumo / Herraje / Químico</option>
+                                <option value="Otro">Otro material</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label for="producto-color">Tono / Color</label>
+                            <select id="producto-color" name="color">
+                                <option value="">Seleccionar tono...</option>
+                                <option value="Café Moro">Café Moro / Chocolate</option>
+                                <option value="Miel">Miel / Caramelo</option>
+                                <option value="Habano">Habano / Tabaco</option>
+                                <option value="Negro">Negro Azabache</option>
+                                <option value="Natural">Natural / Curtido Crudo</option>
+                                <option value="Suela">Suela / Caoba</option>
+                                <option value="Vinotinto">Vinotinto / Borgoña</option>
+                                <option value="Metálico / Otro">Metálico / Otro</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <div class="form-group">
-                        <label for="producto-descripcion">Descripción</label>
-                        <textarea id="producto-descripcion" name="descripcion" rows="2" placeholder="Detalles de manufactura, tipo de cuero, dimensiones o especificaciones..."></textarea>
+                        <label for="producto-descripcion">Descripción & Detalles Artesanales</label>
+                        <textarea id="producto-descripcion" name="descripcion" rows="2" placeholder="Detalles de manufactura, calibre de costura, tipo de herraje o especificaciones..."></textarea>
                     </div>
 
                     <div class="form-row">

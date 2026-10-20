@@ -463,6 +463,28 @@ function renderizarProductos() {
             stockHtml = `<span>${prod.stock} unid.</span>`;
         }
 
+        // Etiquetas de especialidad en cuero
+        let tipoCuero = prod.tipo_cuero || '';
+        let colorCuero = prod.color || '';
+        if (!tipoCuero && prod.descripcion) {
+            const mCuero = prod.descripcion.match(/\[Cuero:\s*([^\]]+)\]/);
+            if (mCuero) tipoCuero = mCuero[1].trim();
+        }
+        if (!colorCuero && prod.descripcion) {
+            const mColor = prod.descripcion.match(/\[Color:\s*([^\]]+)\]/);
+            if (mColor) colorCuero = mColor[1].trim();
+        }
+
+        let tagsCueroHtml = '';
+        if (tipoCuero || colorCuero) {
+            tagsCueroHtml = `
+                <div style="display:flex; gap:4px; margin-top:3px; flex-wrap:wrap;">
+                    ${tipoCuero ? `<span class="badge" style="font-size:0.68rem; padding:1px 6px; background:rgba(184,115,51,0.15); color:var(--color-primary-light);">🐂 ${escapeHTML(tipoCuero)}</span>` : ''}
+                    ${colorCuero ? `<span class="badge" style="font-size:0.68rem; padding:1px 6px; background:rgba(217,119,6,0.12); color:#d97706;">🎨 ${escapeHTML(colorCuero)}</span>` : ''}
+                </div>
+            `;
+        }
+
         return `
             <tr>
                 <td>
@@ -473,6 +495,7 @@ function renderizarProductos() {
                             <span class="producto-desc" title="${escapeHTML(prod.descripcion || '')}">
                                 ${escapeHTML(prod.descripcion || 'Sin descripción')}
                             </span>
+                            ${tagsCueroHtml}
                         </div>
                     </div>
                 </td>
@@ -547,6 +570,8 @@ function abrirModalCrearProducto() {
     document.getElementById('producto-precio').value = '';
     document.getElementById('producto-origen').value = 'fabricado';
     document.getElementById('producto-estado').value = 'disponible';
+    if (document.getElementById('producto-tipo-cuero')) document.getElementById('producto-tipo-cuero').value = '';
+    if (document.getElementById('producto-color')) document.getElementById('producto-color').value = '';
 
     if (previewBox) previewBox.style.display = 'none';
     if (titulo) titulo.textContent = '➕ Nuevo Producto';
@@ -590,6 +615,20 @@ function abrirModalEditarProducto(id) {
     document.getElementById('producto-estado').value = prod.estado || 'disponible';
     document.getElementById('producto-imagen-url').value = prod.imagen_url || '';
 
+    // Tono y tipo de cuero
+    let tipoCueroVal = prod.tipo_cuero || '';
+    let colorVal = prod.color || '';
+    if (!tipoCueroVal && prod.descripcion) {
+        const mCuero = prod.descripcion.match(/\[Cuero:\s*([^\]]+)\]/);
+        if (mCuero) tipoCueroVal = mCuero[1].trim();
+    }
+    if (!colorVal && prod.descripcion) {
+        const mColor = prod.descripcion.match(/\[Color:\s*([^\]]+)\]/);
+        if (mColor) colorVal = mColor[1].trim();
+    }
+    if (document.getElementById('producto-tipo-cuero')) document.getElementById('producto-tipo-cuero').value = tipoCueroVal;
+    if (document.getElementById('producto-color')) document.getElementById('producto-color').value = colorVal;
+
     if (prod.imagen_url && previewBox && previewImg) {
         previewImg.src = prod.imagen_url;
         previewBox.style.display = 'flex';
@@ -632,6 +671,8 @@ async function guardarProducto(e) {
     const nombre = document.getElementById('producto-nombre').value.trim();
     const categoria_id = document.getElementById('producto-categoria').value || null;
     const descripcion = document.getElementById('producto-descripcion').value.trim() || null;
+    const tipo_cuero = document.getElementById('producto-tipo-cuero')?.value || '';
+    const color = document.getElementById('producto-color')?.value || '';
     const precioRaw = document.getElementById('producto-precio').value;
     const stockRaw = document.getElementById('producto-stock').value;
     const origen = document.getElementById('producto-origen').value;
@@ -664,7 +705,9 @@ async function guardarProducto(e) {
         stock,
         origen,
         estado,
-        imagen_url
+        imagen_url,
+        ...(tipo_cuero ? { tipo_cuero } : {}),
+        ...(color ? { color } : {})
     };
 
     try {
@@ -672,21 +715,60 @@ async function guardarProducto(e) {
         btnGuardar.innerHTML = '<span class="spinner"></span> Guardando...';
 
         if (id) {
-            // Actualización
-            const { error } = await db
-                .from('productos')
-                .update(datos)
-                .eq('id', id);
-
-            if (error) throw error;
+            // Actualización con fallback progresivo
+            let res = await db.from('productos').update(datos).eq('id', id);
+            if (res.error && (res.error.code === '42703' || res.error.code === 'PGRST204' || (res.error.message && (res.error.message.includes('tipo_cuero') || res.error.message.includes('color'))))) {
+                console.warn('Columnas tipo_cuero/color no presentes en tabla. Usando fallback en descripción.');
+                let descConTags = descripcion || '';
+                if (tipo_cuero && !descConTags.includes(`[Cuero: ${tipo_cuero}]`)) {
+                    descConTags = descConTags ? `${descConTags} | [Cuero: ${tipo_cuero}]` : `[Cuero: ${tipo_cuero}]`;
+                }
+                if (color && !descConTags.includes(`[Color: ${color}]`)) {
+                    descConTags = descConTags ? `${descConTags} | [Color: ${color}]` : `[Color: ${color}]`;
+                }
+                const datosFallback = {
+                    nombre,
+                    categoria_id,
+                    descripcion: descConTags || null,
+                    precio,
+                    stock,
+                    origen,
+                    estado,
+                    imagen_url
+                };
+                const fallbackRes = await db.from('productos').update(datosFallback).eq('id', id);
+                if (fallbackRes.error) throw fallbackRes.error;
+            } else if (res.error) {
+                throw res.error;
+            }
             mostrarNotificacion(`Producto "${nombre}" actualizado con éxito`, 'success');
         } else {
-            // Inserción
-            const { error } = await db
-                .from('productos')
-                .insert([datos]);
-
-            if (error) throw error;
+            // Inserción con fallback progresivo
+            let res = await db.from('productos').insert([datos]);
+            if (res.error && (res.error.code === '42703' || res.error.code === 'PGRST204' || (res.error.message && (res.error.message.includes('tipo_cuero') || res.error.message.includes('color'))))) {
+                console.warn('Columnas tipo_cuero/color no presentes en tabla. Usando fallback en descripción.');
+                let descConTags = descripcion || '';
+                if (tipo_cuero && !descConTags.includes(`[Cuero: ${tipo_cuero}]`)) {
+                    descConTags = descConTags ? `${descConTags} | [Cuero: ${tipo_cuero}]` : `[Cuero: ${tipo_cuero}]`;
+                }
+                if (color && !descConTags.includes(`[Color: ${color}]`)) {
+                    descConTags = descConTags ? `${descConTags} | [Color: ${color}]` : `[Color: ${color}]`;
+                }
+                const datosFallback = {
+                    nombre,
+                    categoria_id,
+                    descripcion: descConTags || null,
+                    precio,
+                    stock,
+                    origen,
+                    estado,
+                    imagen_url
+                };
+                const fallbackRes = await db.from('productos').insert([datosFallback]);
+                if (fallbackRes.error) throw fallbackRes.error;
+            } else if (res.error) {
+                throw res.error;
+            }
             mostrarNotificacion(`Producto "${nombre}" creado con éxito`, 'success');
         }
 

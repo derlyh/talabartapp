@@ -149,15 +149,31 @@
         <div class="modal-body">
             <form id="form-movimiento">
                 <input type="hidden" name="tipo" id="movimiento-tipo">
+                
                 <div class="form-group">
-                    <label>Concepto / Descripción</label>
-                    <input type="text" name="concepto" class="form-control" required>
+                    <label>Categoría del Taller</label>
+                    <select name="categoria" id="movimiento-categoria" class="form-control" style="background:var(--color-surface-2); border-color:var(--color-border); color:var(--color-text);">
+                        <option value="Cueros y Pieles">🐂 Compra de Cueros y Pieles</option>
+                        <option value="Herrajes y Hebillas">🔩 Herrajes, Hebillas y Remaches</option>
+                        <option value="Insumos y Químicos">🧵 Tintes, Pegantes e Hilos Encerados</option>
+                        <option value="Herramientas">🔨 Herramientas, Afilado y Mantenimiento</option>
+                        <option value="Fletes y Envíos">📦 Fletes, Acarreos y Envíos</option>
+                        <option value="Pago a Artesano">💰 Anticipo / Liquidación a Artesano</option>
+                        <option value="Gastos Taller">💡 Servicios y Mantenimiento del Local</option>
+                        <option value="Otro" selected>📋 Otro Concepto</option>
+                    </select>
                 </div>
+
                 <div class="form-group">
-                    <label>Monto</label>
-                    <input type="number" name="monto" class="form-control" required min="50" step="50">
+                    <label>Concepto / Detalle Específico</label>
+                    <input type="text" name="concepto" class="form-control" placeholder="Ej: Compra de 2 lonjas de vaqueta café" required>
                 </div>
-                <button type="submit" class="btn btn-primary btn-block">Guardar Movimiento</button>
+                
+                <div class="form-group">
+                    <label>Monto ($)</label>
+                    <input type="number" name="monto" class="form-control" placeholder="0" required min="50" step="50">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">💾 Guardar Movimiento</button>
             </form>
         </div>
     </div>

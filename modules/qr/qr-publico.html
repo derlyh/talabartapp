@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cuenta de Cobro — TalabartApp</title>
+    <title>Cuenta de Cobro — Talabartería El Rodeo</title>
     <link rel="stylesheet" href="../../css/global.css">
     <link rel="stylesheet" href="../../css/components.css">
     <!-- Supabase JS SDK CDN -->
@@ -65,8 +65,8 @@
 <div class="recibo-card" id="recibo-contenedor">
     <div class="recibo-header">
         <div style="font-size: 2.8rem; margin-bottom: var(--space-xs);">🐴</div>
-        <h1>Talabartería Artesanal</h1>
-        <p style="opacity: 0.9; font-size: 0.9rem; margin-bottom: 0;">Comprobante de Cuenta y Pago</p>
+        <h1>Talabartería El Rodeo</h1>
+        <p style="opacity: 0.9; font-size: 0.9rem; margin-bottom: 0;">Comprobante de Cuenta y Pago Oficial</p>
     </div>
 
     <div class="recibo-body" id="contenido-cargando">
@@ -238,7 +238,7 @@
 
             // Enlace de WhatsApp
             const telWhatsApp = '573101234567'; // Número de la talabartería
-            const mensaje = encodeURIComponent(`Hola Talabartería, adjunto comprobante de pago para la Cuenta #${cuenta.id.slice(0, 8)} por un total de ${formatMoneda(cuenta.monto)}. Cliente: ${cliente?.nombre || ''}`);
+            const mensaje = encodeURIComponent(`Hola Talabartería El Rodeo, adjunto comprobante de pago para la Cuenta #${cuenta.id.slice(0, 8)} por un total de ${formatMoneda(cuenta.monto)}. Cliente: ${cliente?.nombre || ''}`);
             document.getElementById('btn-notificar-whatsapp').href = `https://wa.me/${telWhatsApp}?text=${mensaje}`;
 
             // Cargar configuración de cuentas
@@ -251,7 +251,7 @@
                     cuentas = [
                         { banco: "Bancolombia Ahorros", numero: "987-654321-00" },
                         { banco: "Nequi / Daviplata", numero: "310 123 4567" },
-                        { banco: "Titular", numero: "Talabartería de Cuero S.A.S" }
+                        { banco: "Titular", numero: "Talabartería El Rodeo" }
                     ];
                 }
                 const bancosContainer = document.getElementById('bancos-contenedor');

@@ -1,12 +1,12 @@
-﻿<div class="modulo-trabajadores">
+<div class="modulo-trabajadores">
     <div class="page-header">
         <div>
             <h1>👥 Trabajadores y Artesanos del Taller</h1>
-            <p class="text-muted">Administra al personal del taller, asigna sus modalidades de trabajo y define sus tarifas de liquidación automática.</p>
+            <p class="text-muted">Registra y administra la información completa del personal, sus tarifas de confección y sus datos para pagos.</p>
         </div>
         <div class="btn-group">
             <button class="btn btn-primary" id="btn-nuevo-trabajador">
-                ➕ Nuevo Trabajador / Artesano
+                ➕ Agregar Nuevo Trabajador
             </button>
         </div>
     </div>
@@ -15,24 +15,24 @@
     <div class="card mb-1">
         <div class="filtros-bar">
             <div class="busqueda-input" style="flex: 1; min-width: 240px;">
-                <input type="text" id="filtro-buscar-trabajador" placeholder="Buscar por nombre o teléfono...">
+                <input type="text" id="filtro-buscar-trabajador" placeholder="Buscar por nombre, cédula, teléfono o especialidad...">
             </div>
             <div>
                 <select id="filtro-rol-trabajador">
                     <option value="">Todos los roles</option>
-                    <option value="trabajador" selected>Artesanos / Taller</option>
-                    <option value="vendedor">Vendedores</option>
-                    <option value="admin">Administradores</option>
+                    <option value="trabajador" selected>🔨 Artesanos / Taller</option>
+                    <option value="vendedor">🛒 Vendedores</option>
+                    <option value="admin">👑 Administradores</option>
                 </select>
             </div>
             <div>
                 <select id="filtro-tipo-pago">
                     <option value="">Todas las modalidades</option>
-                    <option value="por_unidad">Pago por Unidad</option>
-                    <option value="por_hora">Pago por Hora</option>
+                    <option value="por_unidad">📦 Pago por Unidad</option>
+                    <option value="por_hora">⏱️ Pago por Hora</option>
                 </select>
             </div>
-            <button class="btn btn-secondary btn-icon" id="btn-limpiar-filtros-trabajador" title="Recargar">🔄</button>
+            <button class="btn btn-secondary btn-icon" id="btn-limpiar-filtros-trabajador" title="Recargar lista">🔄</button>
         </div>
     </div>
 
@@ -42,18 +42,20 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Nombre / Artesano</th>
-                        <th>Teléfono</th>
+                        <th>Trabajador / Especialidad</th>
+                        <th>Cédula / Doc</th>
+                        <th>Contacto</th>
+                        <th>Cuenta para Pagos</th>
                         <th>Rol</th>
-                        <th>Modalidad de Pago</th>
+                        <th>Modalidad</th>
                         <th>Tarifa Configurada</th>
                         <th>Estado</th>
-                        <th>Acciones</th>
+                        <th style="text-align: right;">Acciones</th>
                     </tr>
                 </thead>
                 <tbody id="trabajadores-tbody">
                     <tr>
-                        <td colspan="7" class="text-center py-4">
+                        <td colspan="9" class="text-center py-4">
                             <div class="spinner"></div>
                             <p class="mt-1 text-muted">Cargando personal del taller...</p>
                         </td>
@@ -66,23 +68,49 @@
 
 <!-- Modal Crear / Editar Trabajador -->
 <div class="modal-overlay hidden" id="modal-trabajador">
-    <div class="modal" style="max-width: 580px;">
+    <div class="modal" style="max-width: 660px; max-height: 90vh; overflow-y: auto;">
         <div class="modal-header">
-            <h3 id="modal-trabajador-titulo">Nuevo Trabajador / Artesano</h3>
+            <h3 id="modal-trabajador-titulo">➕ Agregar Nuevo Trabajador</h3>
         </div>
         <form id="form-trabajador">
             <div class="modal-body">
                 <input type="hidden" id="trabajador-id" name="id">
 
+                <!-- SECCIÓN 1: DATOS PERSONALES -->
+                <div style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--color-primary); margin-bottom: var(--space-sm); border-bottom: 2px solid var(--color-surface-2); padding-bottom: 4px;">
+                    👤 1. Datos Personales y Contacto
+                </div>
+
                 <div class="form-row">
-                    <div class="form-group">
+                    <div class="form-group" style="flex: 1.4;">
                         <label for="trab-nombre">Nombre Completo *</label>
                         <input type="text" id="trab-nombre" name="nombre" placeholder="Ej. Mateo Morales" required>
                     </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label for="trab-documento">Cédula / Documento</label>
+                        <input type="text" id="trab-documento" name="documento" placeholder="Ej. 1020304050">
+                    </div>
+                </div>
+
+                <div class="form-row">
                     <div class="form-group">
-                        <label for="trab-telefono">Teléfono / Celular</label>
+                        <label for="trab-telefono">Teléfono / WhatsApp</label>
                         <input type="tel" id="trab-telefono" name="telefono" placeholder="Ej. 310 123 4567">
                     </div>
+                    <div class="form-group">
+                        <label for="trab-email">Correo Electrónico</label>
+                        <input type="email" id="trab-email" name="email" placeholder="mateo@taller.com">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="trab-direccion">Dirección / Residencia</label>
+                    <input type="text" id="trab-direccion" name="direccion" placeholder="Ej. Carrera 15 # 45-20, Barrio El Centro">
+                </div>
+
+                <!-- SECCIÓN 2: DATOS LABORALES Y TARIFAS -->
+                <div style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--color-primary); margin-top: var(--space-md); margin-bottom: var(--space-sm); border-bottom: 2px solid var(--color-surface-2); padding-bottom: 4px;">
+                    🔨 2. Datos Laborales y Tarifas de Confección
                 </div>
 
                 <div class="form-row">
@@ -95,31 +123,61 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="trab-tipo-pago">Modalidad de Remuneración *</label>
-                        <select id="trab-tipo-pago" name="tipo_pago" required>
-                            <option value="por_unidad">📦 Por Unidad Terminada</option>
-                            <option value="por_hora">⏱️ Por Horas Trabajadas</option>
-                        </select>
+                        <label for="trab-especialidad">Especialidad / Tarea Principal</label>
+                        <input type="text" id="trab-especialidad" name="especialidad" placeholder="Ej. Monturas, Repujado, Cinturones">
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
+                        <label for="trab-tipo-pago">Modalidad de Pago *</label>
+                        <select id="trab-tipo-pago" name="tipo_pago" required>
+                            <option value="por_unidad">📦 Por Unidad Fabricada</option>
+                            <option value="por_hora">⏱️ Por Horas Trabajadas</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label for="trab-tarifa-unidad">Tarifa por Unidad Fabricada ($)</label>
                         <input type="number" id="trab-tarifa-unidad" name="tarifa_unidad" min="0" step="500" placeholder="Ej. 15000">
-                        <small class="text-muted">Monto que gana por cada cinturón, montura o bolso terminado.</small>
                     </div>
+                </div>
+
+                <div class="form-row">
                     <div class="form-group">
                         <label for="trab-tarifa-hora">Tarifa por Hora Trabajada ($)</label>
                         <input type="number" id="trab-tarifa-hora" name="tarifa_hora" min="0" step="500" placeholder="Ej. 18000">
-                        <small class="text-muted">Aplica cuando la confección se mide por tiempo.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="trab-notas">Notas / Observaciones</label>
+                        <input type="text" id="trab-notas" name="notas" placeholder="Ej. Horario flexible, fecha de ingreso">
+                    </div>
+                </div>
+
+                <!-- SECCIÓN 3: DATOS BANCARIOS PARA TRANSFERENCIA -->
+                <div style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--color-primary); margin-top: var(--space-md); margin-bottom: var(--space-sm); border-bottom: 2px solid var(--color-surface-2); padding-bottom: 4px;">
+                    💳 3. Cuenta para Liquidación y Pagos
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="trab-banco">Banco o Billetera</label>
+                        <input type="text" id="trab-banco" name="banco" placeholder="Ej. Nequi, Daviplata, Bancolombia">
+                    </div>
+                    <div class="form-group">
+                        <label for="trab-cuenta">Número de Cuenta o Celular</label>
+                        <input type="text" id="trab-cuenta" name="cuenta_bancaria" placeholder="Ej. 310 123 4567 o 987-654321-00">
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label>
-                        <input type="checkbox" id="trab-activo" name="activo" checked style="width: auto; margin-right: 6px;">
-                        Trabajador activo en el taller (disponible para asignarle órdenes de trabajo)
+                    <label for="trab-titular">Titular de la Cuenta (si es diferente)</label>
+                    <input type="text" id="trab-titular" name="titular_cuenta" placeholder="Nombre completo del titular">
+                </div>
+
+                <div class="form-group" style="margin-top: var(--space-md); background: var(--color-surface-2); padding: var(--space-sm); border-radius: var(--radius-md);">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;">
+                        <input type="checkbox" id="trab-activo" name="activo" checked style="width: auto; margin: 0;">
+                        <span><strong>Trabajador activo en el taller</strong> (disponible para asignarle lotes en producción)</span>
                     </label>
                 </div>
             </div>
@@ -128,5 +186,21 @@
                 <button type="submit" class="btn btn-primary" id="btn-guardar-trabajador">💾 Guardar Trabajador</button>
             </div>
         </form>
+    </div>
+</div>
+
+<!-- Modal Ver Ficha de Trabajador -->
+<div class="modal-overlay hidden" id="modal-ver-trabajador">
+    <div class="modal" style="max-width: 540px;">
+        <div class="modal-header">
+            <h3 id="ver-trab-titulo">Ficha del Trabajador</h3>
+        </div>
+        <div class="modal-body" id="ver-trab-contenido">
+            <!-- Contenido dinámico inyectado por JS -->
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" id="btn-cerrar-ver-trabajador">Cerrar</button>
+            <button type="button" class="btn btn-primary" id="btn-editar-desde-ver">✏️ Editar Datos</button>
+        </div>
     </div>
 </div>

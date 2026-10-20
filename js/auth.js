@@ -1,92 +1,176 @@
 import { db } from './supabase-client.js';
 
-// Rol activo y usuario
+// Estado de sesión y perfil del usuario
 let perfilActual = null;
 let usuarioActual = null;
 
+/**
+ * Inicializar módulo de autenticación con Supabase Auth
+ */
 export async function initAuth() {
-    const userId = localStorage.getItem('talabartapp_user_id');
-    if (userId) {
-        try {
-            const { data } = await db.from('usuarios').select('*').eq('id', userId).single();
-            if (data) {
-                perfilActual = data;
-                usuarioActual = {
-                    id: data.id,
-                    email: data.nombre + '@local', // mock
-                    user_metadata: { nombre: data.nombre, rol: data.rol }
-                };
-            }
-        } catch(e) {
-            console.error('Error cargando sesion:', e);
-            localStorage.removeItem('talabartapp_user_id');
+    try {
+        const { data: { session }, error } = await db.auth.getSession();
+        if (session?.user) {
+            usuarioActual = session.user;
+            await cargarPerfilSupabase(session.user);
+        } else {
+            usuarioActual = null;
+            perfilActual = null;
         }
+    } catch (e) {
+        console.error('Error al inicializar sesión en Supabase:', e);
+        usuarioActual = null;
+        perfilActual = null;
+    }
+
+    // Escuchar cambios de sesión en tiempo real (login, logout, refresh de token)
+    db.auth.onAuthStateChange(async (event, session) => {
+        if (session?.user) {
+            usuarioActual = session.user;
+            await cargarPerfilSupabase(session.user);
+        } else {
+            usuarioActual = null;
+            perfilActual = null;
+        }
+        window.dispatchEvent(new CustomEvent('cambio-rol-usuario', { detail: perfilActual }));
+    });
+}
+
+/**
+ * Cargar o sincronizar el perfil del usuario desde public.usuarios
+ */
+async function cargarPerfilSupabase(user) {
+    if (!user) return;
+    try {
+        // 1. Intentar consultar por ID en public.usuarios
+        let { data, error } = await db
+            .from('usuarios')
+            .select('*')
+            .eq('id', user.id)
+            .maybeSingle();
+
+        // 2. Si no se encontró por ID, intentar por correo
+        if (!data && user.email) {
+            const { data: porEmail } = await db
+                .from('usuarios')
+                .select('*')
+                .eq('email', user.email)
+                .maybeSingle();
+            data = porEmail;
+        }
+
+        // 3. Si no existe aún en public.usuarios, crearlo con los datos de Supabase Auth
+        if (!data) {
+            const nombre = user.user_metadata?.nombre || (user.email ? user.email.split('@')[0] : 'Usuario');
+            const rol = user.user_metadata?.rol || 'admin';
+
+            const nuevoUsuario = {
+                id: user.id,
+                email: user.email,
+                nombre: nombre,
+                rol: rol,
+                activo: true
+            };
+
+            const { data: insertado } = await db
+                .from('usuarios')
+                .upsert([nuevoUsuario], { onConflict: 'id' })
+                .select()
+                .maybeSingle();
+
+            perfilActual = insertado || nuevoUsuario;
+        } else {
+            perfilActual = data;
+        }
+    } catch (err) {
+        console.warn('Aviso al cargar perfil de usuario:', err);
+        perfilActual = {
+            id: user.id,
+            email: user.email,
+            nombre: user.user_metadata?.nombre || (user.email ? user.email.split('@')[0] : 'Usuario'),
+            rol: user.user_metadata?.rol || 'admin',
+            activo: true
+        };
     }
 }
 
-export function getUsuario() { return usuarioActual; }
-export function getPerfil() { return perfilActual; }
-export function getRol() { return perfilActual?.rol || null; }
-
-export function tieneRol(...roles) {
-    if (getRol() === 'admin') return true;
-    return roles.includes(getRol());
+/**
+ * Obtener el usuario autenticado de Supabase
+ */
+export function getUsuario() {
+    return usuarioActual;
 }
 
+/**
+ * Obtener el perfil completo del usuario (nombre, rol, tarifas, etc.)
+ */
+export function getPerfil() {
+    return perfilActual;
+}
+
+/**
+ * Obtener el rol del usuario conectado
+ */
+export function getRol() {
+    return perfilActual?.rol || null;
+}
+
+/**
+ * Verificar si el usuario conectado posee uno de los roles permitidos
+ */
+export function tieneRol(...roles) {
+    const rolActual = getRol();
+    if (!rolActual) return false;
+    if (rolActual === 'admin') return true;
+    return roles.includes(rolActual);
+}
+
+/**
+ * Cambiar temporalmente el rol activo (para pruebas en interfaz)
+ */
 export function cambiarRolActivo(nuevoRol) {
-    // Solo para pruebas si se usa el selector
-    if(perfilActual) {
+    if (perfilActual) {
         perfilActual.rol = nuevoRol;
         window.dispatchEvent(new CustomEvent('cambio-rol-usuario', { detail: perfilActual }));
     }
 }
 
-export async function login(nombre, password) {
-    const { data, error } = await db.from('usuarios')
-        .select('*')
-        .eq('nombre', nombre)
-        .eq('password', password)
-        .single();
-        
-    if (error || !data) {
-        throw new Error('Credenciales incorrectas');
+/**
+ * Iniciar sesión con Supabase Auth (correo y contraseña creados en el dashboard de Supabase)
+ */
+export async function login(email, password) {
+    const { data, error } = await db.auth.signInWithPassword({
+        email: email.trim(),
+        password
+    });
+
+    if (error) {
+        throw error;
     }
-    
-    perfilActual = data;
-    usuarioActual = { id: data.id, email: data.nombre + '@local', user_metadata: { nombre: data.nombre, rol: data.rol }};
-    localStorage.setItem('talabartapp_user_id', data.id);
+
+    usuarioActual = data.user;
+    await cargarPerfilSupabase(data.user);
     window.dispatchEvent(new CustomEvent('cambio-rol-usuario', { detail: perfilActual }));
-    return { user: usuarioActual };
+    return { user: usuarioActual, session: data.session };
 }
 
-export async function registrarse(nombre, email, password, rol) {
-    // Verifica si existe
-    const { data: existe } = await db.from('usuarios').select('id').eq('nombre', nombre).maybeSingle();
-    if (existe) throw new Error('Ya existe un usuario con ese nombre');
-
-    const { data, error } = await db.from('usuarios')
-        .insert([{ nombre, password, rol, activo: true }])
-        .select()
-        .single();
-
-    if (error) throw error;
-    
-    perfilActual = data;
-    usuarioActual = { id: data.id, email: data.nombre + '@local', user_metadata: { nombre: data.nombre, rol: data.rol }};
-    localStorage.setItem('talabartapp_user_id', data.id);
-    window.dispatchEvent(new CustomEvent('cambio-rol-usuario', { detail: perfilActual }));
-    return { user: usuarioActual, session: true };
-}
-
+/**
+ * Cerrar sesión en Supabase Auth y redirigir al login
+ */
 export async function logout() {
+    try {
+        await db.auth.signOut();
+    } catch (e) {
+        console.warn('Aviso cerrando sesión en Supabase:', e);
+    }
     perfilActual = null;
     usuarioActual = null;
-    localStorage.removeItem('talabartapp_user_id');
+    window.dispatchEvent(new CustomEvent('cambio-rol-usuario', { detail: null }));
     window.location.hash = '#/login';
 }
 
 /**
- * Guard de ruta: siempre permite el acceso
+ * Guard de ruta
  */
 export function guardRuta(rolesPermitidos = []) {
     return true;

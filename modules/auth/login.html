@@ -1,20 +1,10 @@
-﻿<div class="login-layout">
+<div class="login-layout">
     <div class="login-card" style="max-width: 440px;">
         <div style="text-align:center; font-size:3rem; margin-bottom: 0.5rem;">🐴</div>
-        <h1>TalabartApp</h1>
-        <p class="login-subtitulo">Sistema de Gestión para Talabartería</p>
+        <h1>Talabartería El Rodeo</h1>
+        <p class="login-subtitulo">Sistema de Gestión • Taller & Almacén de Marroquinería</p>
 
-        <!-- Selector de Pestañas -->
-        <div style="display: flex; gap: var(--space-xs); margin-bottom: var(--space-lg); background: var(--color-surface-2); padding: 4px; border-radius: var(--radius-md); border: 1px solid var(--color-border);">
-            <button type="button" id="tab-login" class="btn btn-sm" style="flex: 1; justify-content: center; background: var(--color-primary); color: white;">
-                Iniciar Sesión
-            </button>
-            <button type="button" id="tab-registro" class="btn btn-sm btn-secondary" style="flex: 1; justify-content: center;">
-                Crear Cuenta
-            </button>
-        </div>
-
-        <!-- FORMULARIO 1: INICIAR SESIÓN -->
+        <!-- FORMULARIO DE INICIO DE SESIÓN -->
         <form id="login-form">
             <div class="form-group">
                 <label for="login-email">Correo electrónico</label>
@@ -35,46 +25,9 @@
             </button>
         </form>
 
-        <!-- FORMULARIO 2: CREAR CUENTA (REGISTRO) -->
-        <form id="registro-form" class="hidden">
-            <div class="form-group">
-                <label for="reg-nombre">Nombre Completo *</label>
-                <input type="text" id="reg-nombre" name="nombre" placeholder="Ej. Juan Pérez" required>
-            </div>
-
-            <div class="form-group">
-                <label for="reg-email">Correo Electrónico *</label>
-                <input type="email" id="reg-email" name="email" placeholder="juan@talabarteria.com" required>
-            </div>
-
-            <div class="form-group">
-                <label for="reg-password">Contraseña (Mínimo 6 caracteres) *</label>
-                <input type="password" id="reg-password" name="password" placeholder="••••••••" minlength="6" required>
-            </div>
-
-            <div class="form-group">
-                <label for="reg-rol">Rol en el Negocio *</label>
-                <select id="reg-rol" name="rol" required>
-                    <option value="admin">Administrador (Control Total)</option>
-                    <option value="vendedor" selected>Vendedor (Ventas, Inventario y Cobro QR)</option>
-                    <option value="trabajador">Trabajador / Artesano (Confección y Pagos)</option>
-                </select>
-                <small class="text-muted" style="font-size: 0.75rem; display: block; margin-top: 4px;">
-                    Si es tu primera vez en la aplicación, regístrate como Administrador.
-                </small>
-            </div>
-
-            <div id="registro-error" class="text-error" style="margin-bottom: 1rem; font-size: 0.88rem; display:none; background: rgba(231,76,60,0.1); padding: var(--space-sm); border-radius: var(--radius-md); border: 1px solid var(--color-error);"></div>
-            <div id="registro-exito" class="text-success" style="margin-bottom: 1rem; font-size: 0.88rem; display:none; background: rgba(46,204,113,0.1); padding: var(--space-sm); border-radius: var(--radius-md); border: 1px solid var(--color-success);"></div>
-
-            <button type="submit" class="btn btn-primary btn-lg" style="width:100%; justify-content: center;" id="reg-btn">
-                Registrarse y Entrar
-            </button>
-        </form>
-
         <div style="margin-top: var(--space-lg); padding-top: var(--space-md); border-top: 1px solid var(--color-border); text-align: center;">
             <p class="text-muted" style="font-size: 0.78rem; margin-bottom: 0;">
-                💡 <strong>Nota:</strong> Si ya creaste tu usuario en el panel de Supabase Auth, asegúrate de ingresar el mismo correo y contraseña configurados.
+                🔒 <strong>Acceso restringido:</strong> Las cuentas son gestionadas exclusivamente por el administrador desde el panel de Supabase. No se permite registro público.
             </p>
         </div>
     </div>
