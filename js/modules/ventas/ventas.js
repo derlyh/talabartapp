@@ -239,11 +239,6 @@ export async function init() {
                             <button type="button" class="btn btn-secondary btn-sm btn-ver-detalle" data-id="${venta.id}" title="Ver detalle de venta">
                                 👁️ Detalle
                             </button>
-                            ${esPendiente ? `
-                                <button type="button" class="btn btn-warning btn-sm btn-generar-qr" data-id="${venta.id}" title="Generar / Cobrar con QR">
-                                    📱 QR
-                                </button>
-                            ` : ''}
                             ${!esCancelada ? `
                                 <button type="button" class="btn btn-danger btn-sm btn-cancelar-venta" data-id="${venta.id}" title="Cancelar venta">
                                     ❌ Cancelar
@@ -258,10 +253,6 @@ export async function init() {
         // Conectar eventos a los botones de acción
         tbody.querySelectorAll('.btn-ver-detalle').forEach(btn => {
             btn.addEventListener('click', () => abrirModalDetalle(btn.dataset.id));
-        });
-
-        tbody.querySelectorAll('.btn-generar-qr').forEach(btn => {
-            btn.addEventListener('click', () => gestionarQrVenta(btn.dataset.id));
         });
 
         tbody.querySelectorAll('.btn-cancelar-venta').forEach(btn => {
@@ -315,19 +306,6 @@ export async function init() {
         }
         document.getElementById('detalle-cliente-contacto').textContent = contactoTexto;
         document.getElementById('detalle-notas').textContent = venta.notas || 'Ninguna observación';
-
-        // Configurar botón QR en modal si la venta está pendiente
-        if (btnDetalleGenerarQr) {
-            if (venta.estado === 'pendiente') {
-                btnDetalleGenerarQr.classList.remove('hidden');
-                btnDetalleGenerarQr.onclick = () => {
-                    cerrarModalDetalle();
-                    gestionarQrVenta(venta.id);
-                };
-            } else {
-                btnDetalleGenerarQr.classList.add('hidden');
-            }
-        }
 
         // Cargar ítems de detalle_ventas
         const itemsTbody = document.getElementById('detalle-items-tbody');
@@ -1008,9 +986,7 @@ export async function initNuevaVenta() {
         const metodoPago = metodoPagoSeleccionado;
         const notas = posNotas?.value?.trim() || null;
 
-        // Si es QR, el estado inicial es 'pendiente' para esperar confirmación de pago;
-        // en otros métodos se considera 'pagada' de inmediato en mostrador.
-        const estadoVenta = (metodoPago === 'qr') ? 'pendiente' : 'pagada';
+        const estadoVenta = 'pagada';
 
         // Bloquear botón durante el procesamiento
         if (btnCompletarVenta) {
@@ -1059,39 +1035,7 @@ export async function initNuevaVenta() {
             }
 
             // ============================================================
-            // 3. Si el método de pago es 'qr', insertar en 'cuentas_cobro' y redirigir
-            // ============================================================
-            if (metodoPago === 'qr') {
-                const totalCalculado = carrito.reduce((acc, i) => acc + (i.cantidad * i.producto.precio), 0);
-                const qrPayload = JSON.stringify({
-                    sistema: 'Talabartería El Rodeo',
-                    venta_id: nuevaVenta.id,
-                    monto: totalCalculado,
-                    metodo: 'qr',
-                    fecha: new Date().toISOString()
-                });
-
-                const { error: errCobro } = await db
-                    .from('cuentas_cobro')
-                    .insert([{
-                        venta_id: nuevaVenta.id,
-                        monto: totalCalculado,
-                        estado: 'pendiente',
-                        qr_data: qrPayload,
-                        fecha_limite: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
-                    }]);
-
-                if (errCobro) {
-                    console.warn('Error al registrar cuenta_cobro para QR:', errCobro);
-                }
-
-                mostrarNotificacion('Venta registrada con éxito. Redirigiendo a pantalla de Cobro QR...', 'success');
-                navegar(`/qr?venta=${nuevaVenta.id}`);
-                return;
-            }
-
-            // ============================================================
-            // 4. Venta con otros métodos de pago: Notificar y redirigir a #/ventas
+            // 3. Notificar y redirigir a #/ventas
             // ============================================================
             mostrarNotificacion('¡Venta completada con éxito!', 'success');
             navegar('/ventas');

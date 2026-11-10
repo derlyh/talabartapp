@@ -1,66 +1,82 @@
 /* ============================================================
-   Global — Variables, Reset, Tipografía
+   Global — Variables, Reset, Tipografía & Paleta Profesional
+   Talabartería El Rodeo — Sistema de Gestión Integral
    ============================================================ */
 
 :root {
-    /* Colores principales - tema cuero/talabartería */
-    --color-primary: #8B4513;
-    --color-primary-light: #A0522D;
-    --color-primary-dark: #6B3410;
-    --color-secondary: #D4A574;
-    --color-secondary-light: #E8C9A0;
-    --color-accent: #C19A6B;
+    /* Identidad de Marca: Cuero y Marroquinería Fina */
+    --color-primary: #a85624;
+    --color-primary-light: #c2692f;
+    --color-primary-dark: #7c3a14;
+    --color-secondary: #dca36d;
+    --color-secondary-light: #f3d5b5;
+    --color-accent: #e76f51;
 
-    /* Fondo y superficies */
-    --color-bg: #0f0f1a;
-    --color-surface: #1a1a2e;
-    --color-surface-2: #16213e;
-    --color-surface-3: #1f2b47;
-    --color-border: #2a2a4a;
-    --color-border-light: #3a3a5a;
+    /* Superficies y Fondo (Obsidian & Deep Slate) */
+    --color-bg: #0c0e14;
+    --color-surface: #131722;
+    --color-surface-2: #181e2b;
+    --color-surface-3: #202737;
+    --color-surface-hover: #262e40;
+    
+    /* Bordes sutiles y de alta definición */
+    --color-border: rgba(255, 255, 255, 0.08);
+    --color-border-light: rgba(255, 255, 255, 0.14);
+    --color-border-accent: rgba(220, 163, 109, 0.35);
 
-    /* Texto */
-    --color-text: #e8e8e8;
-    --color-text-secondary: #a0a0b8;
-    --color-text-muted: #6a6a8a;
+    /* Jerarquía Tipográfica y Contraste de Texto */
+    --color-text: #f3f4f6;
+    --color-text-secondary: #9ca3af;
+    --color-text-muted: #6b7280;
 
-    /* Estados */
-    --color-success: #2ecc71;
-    --color-error: #e74c3c;
-    --color-warning: #f39c12;
-    --color-info: #3498db;
+    /* Indicadores de Estado Modernos */
+    --color-success: #10b981;
+    --color-success-bg: rgba(16, 185, 129, 0.12);
+    --color-error: #ef4444;
+    --color-error-bg: rgba(239, 68, 68, 0.12);
+    --color-warning: #f59e0b;
+    --color-warning-bg: rgba(245, 158, 11, 0.12);
+    --color-info: #3b82f6;
+    --color-info-bg: rgba(59, 130, 246, 0.12);
 
-    /* Tipografía */
-    --font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    --font-mono: 'Cascadia Code', 'Fira Code', monospace;
+    /* Tipografía Corporativa */
+    --font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-display: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+    --font-mono: 'Cascadia Code', 'Fira Code', 'Courier New', monospace;
 
-    /* Espaciado */
-    --space-xs: 0.25rem;
+    /* Escala de Espaciado */
+    --space-2xs: 0.2rem;
+    --space-xs: 0.35rem;
     --space-sm: 0.5rem;
     --space-md: 1rem;
     --space-lg: 1.5rem;
     --space-xl: 2rem;
     --space-2xl: 3rem;
 
-    /* Bordes */
-    --radius-sm: 4px;
-    --radius-md: 8px;
-    --radius-lg: 12px;
+    /* Bordes Redondeados */
+    --radius-xs: 4px;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-xl: 18px;
     --radius-full: 9999px;
 
-    /* Sombras */
-    --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
-    --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
-    --shadow-lg: 0 8px 24px rgba(0,0,0,0.5);
+    /* Sombras Profesionales con Efecto de Profundidad */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35);
+    --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.45);
+    --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.55);
+    --shadow-glow: 0 0 20px rgba(168, 86, 36, 0.25);
+    --shadow-inner: inset 0 1px 0 rgba(255, 255, 255, 0.05);
 
-    /* Sidebar */
-    --sidebar-width: 260px;
+    /* Ancho de Navegación */
+    --sidebar-width: 268px;
 
-    /* Transiciones */
-    --transition: 0.2s ease;
+    /* Transición Suave */
+    --transition: 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Reset */
+/* Reset Moderno */
 *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
@@ -68,59 +84,68 @@
 }
 
 html {
-    font-size: 16px;
+    font-size: 15px;
     scroll-behavior: smooth;
+    letter-spacing: -0.01em;
 }
 
 body {
     font-family: var(--font-family);
     background-color: var(--color-bg);
     color: var(--color-text);
-    line-height: 1.6;
+    line-height: 1.55;
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
 }
 
-/* Tipografía */
+/* Encabezados y Tipografía de Impacto */
 h1, h2, h3, h4, h5, h6 {
     color: var(--color-text);
-    font-weight: 600;
-    line-height: 1.3;
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
 }
 
-h1 { font-size: 1.75rem; }
+h1 { font-size: 1.85rem; }
 h2 { font-size: 1.5rem; }
-h3 { font-size: 1.25rem; }
-h4 { font-size: 1.1rem; }
+h3 { font-size: 1.22rem; }
+h4 { font-size: 1.05rem; }
 
-p { margin-bottom: var(--space-md); }
+p {
+    margin-bottom: var(--space-md);
+    color: var(--color-text-secondary);
+}
 
 a {
     color: var(--color-secondary);
     text-decoration: none;
     transition: color var(--transition);
 }
+
 a:hover {
     color: var(--color-secondary-light);
 }
 
-/* Formularios */
+/* Formularios y Controles Profesionales */
 input, select, textarea {
     font-family: inherit;
-    font-size: 0.9rem;
-    padding: var(--space-sm) var(--space-md);
+    font-size: 0.92rem;
+    padding: 0.65rem 0.95rem;
     background: var(--color-surface-2);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
     color: var(--color-text);
-    transition: border-color var(--transition), box-shadow var(--transition);
+    transition: border-color var(--transition), box-shadow var(--transition), background-color var(--transition);
     width: 100%;
 }
 
 input:focus, select:focus, textarea:focus {
     outline: none;
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.2);
+    border-color: var(--color-secondary);
+    background: var(--color-surface-3);
+    box-shadow: 0 0 0 3px rgba(220, 163, 109, 0.2);
 }
 
 input::placeholder, textarea::placeholder {
@@ -130,21 +155,28 @@ input::placeholder, textarea::placeholder {
 select {
     cursor: pointer;
     appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23a0a0b8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23dca36d' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
-    background-position: right 12px center;
-    padding-right: 36px;
+    background-position: right 14px center;
+    padding-right: 38px;
+}
+
+select option {
+    background: var(--color-surface);
+    color: var(--color-text);
 }
 
 textarea {
     resize: vertical;
-    min-height: 80px;
+    min-height: 85px;
 }
 
 label {
     display: block;
-    font-size: 0.85rem;
-    font-weight: 500;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
     color: var(--color-text-secondary);
     margin-bottom: var(--space-xs);
 }
@@ -159,23 +191,27 @@ label {
     gap: var(--space-md);
 }
 
-/* Scrollbar */
+/* Barra de Desplazamiento Refinada */
 ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-::-webkit-scrollbar-track {
-    background: var(--color-surface);
-}
-::-webkit-scrollbar-thumb {
-    background: var(--color-border-light);
-    border-radius: var(--radius-full);
-}
-::-webkit-scrollbar-thumb:hover {
-    background: var(--color-primary);
+    width: 7px;
+    height: 7px;
 }
 
-/* Utilidades */
+::-webkit-scrollbar-track {
+    background: var(--color-bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-surface-3);
+    border-radius: var(--radius-full);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primary-light);
+}
+
+/* Utilidades Globales */
 .text-center { text-align: center; }
 .text-right { text-align: right; }
 .text-muted { color: var(--color-text-muted); }

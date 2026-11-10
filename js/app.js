@@ -60,27 +60,8 @@ registrarRuta('/nueva-venta', {
     }
 });
 
-// Clientes
-registrarRuta('/clientes', {
-    titulo: 'Clientes',
-    html: 'modules/clientes/clientes.html',
-    roles: ['admin', 'vendedor'],
-    cargar: async () => {
-        const modulo = await import('./modules/clientes/clientes.js');
-        modulo.init();
-    }
-});
 
-// QR
-registrarRuta('/qr', {
-    titulo: 'Cobro QR',
-    html: 'modules/qr/qr.html',
-    roles: ['admin', 'vendedor'],
-    cargar: async () => {
-        const modulo = await import('./modules/qr/qr.js');
-        modulo.init();
-    }
-});
+
 
 // Productividad
 registrarRuta('/productividad', {

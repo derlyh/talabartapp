@@ -1,14 +1,16 @@
 /* ============================================================
    Layout — Sidebar, Contenido Principal, Responsive
+   Talabartería El Rodeo — Acabado Profesional
    ============================================================ */
 
 /* ---- Layout principal ---- */
 .app-layout {
     display: flex;
     min-height: 100vh;
+    background-color: var(--color-bg);
 }
 
-/* ---- Sidebar ---- */
+/* ---- Sidebar Corporativo ---- */
 .sidebar {
     width: var(--sidebar-width);
     background: var(--color-surface);
@@ -20,7 +22,8 @@
     left: 0;
     bottom: 0;
     z-index: 100;
-    transition: transform var(--transition);
+    transition: transform var(--transition-slow);
+    box-shadow: 2px 0 16px rgba(0, 0, 0, 0.4);
 }
 
 .sidebar-header {
@@ -29,86 +32,129 @@
     display: flex;
     align-items: center;
     gap: var(--space-md);
+    background: linear-gradient(180deg, rgba(168, 86, 36, 0.08) 0%, transparent 100%);
+    position: relative;
+}
+
+.sidebar-header::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: var(--space-lg);
+    right: var(--space-lg);
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--color-secondary), transparent);
+    opacity: 0.35;
 }
 
 .sidebar-header .logo {
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     border-radius: var(--radius-md);
 }
 
 .sidebar-header h1 {
-    font-size: 1.2rem;
-    color: var(--color-secondary);
+    font-size: 1.05rem;
+    color: #ffffff;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    line-height: 1.2;
 }
 
 .sidebar-nav {
     flex: 1;
-    padding: var(--space-md);
+    padding: var(--space-md) var(--space-sm);
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
 }
 
 .nav-section {
-    margin-bottom: var(--space-lg);
+    margin-bottom: var(--space-md);
 }
 
 .nav-section-title {
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 1.2px;
     color: var(--color-text-muted);
-    padding: var(--space-sm) var(--space-md);
+    padding: var(--space-xs) var(--space-md);
+    margin-bottom: 2px;
 }
 
 .nav-link {
     display: flex;
     align-items: center;
-    gap: var(--space-md);
-    padding: var(--space-sm) var(--space-md);
+    gap: 0.85rem;
+    padding: 0.65rem 0.95rem;
     border-radius: var(--radius-md);
     color: var(--color-text-secondary);
-    font-size: 0.9rem;
+    font-size: 0.88rem;
+    font-weight: 500;
     transition: all var(--transition);
     text-decoration: none;
+    position: relative;
+    border-left: 3px solid transparent;
 }
 
 .nav-link:hover {
     background: var(--color-surface-2);
-    color: var(--color-text);
+    color: #ffffff;
+    transform: translateX(2px);
 }
 
 .nav-link.active {
-    background: var(--color-primary);
-    color: white;
+    background: linear-gradient(90deg, rgba(168, 86, 36, 0.22) 0%, rgba(168, 86, 36, 0.04) 100%);
+    color: #ffffff;
+    border-left-color: var(--color-secondary);
+    font-weight: 600;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 .nav-link .nav-icono {
-    font-size: 1.1rem;
-    width: 24px;
+    font-size: 1.15rem;
+    width: 22px;
     text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.85;
+    transition: transform var(--transition);
 }
 
-/* ---- Perfil en sidebar ---- */
+.nav-link:hover .nav-icono,
+.nav-link.active .nav-icono {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* ---- Perfil en Pie de Sidebar ---- */
 .sidebar-footer {
-    padding: var(--space-md) var(--space-lg);
+    padding: var(--space-md);
     border-top: 1px solid var(--color-border);
     display: flex;
     align-items: center;
-    gap: var(--space-md);
+    gap: var(--space-sm);
+    background: var(--color-surface-2);
+    position: relative;
 }
 
 .sidebar-footer .avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: var(--color-primary);
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 700;
     color: white;
-    font-size: 0.85rem;
+    font-size: 0.92rem;
+    border: 1.5px solid var(--color-secondary);
+    box-shadow: var(--shadow-sm);
+    flex-shrink: 0;
 }
 
 .sidebar-footer .user-info {
@@ -117,39 +163,43 @@
 }
 
 .sidebar-footer .user-nombre {
-    font-size: 0.85rem;
+    font-size: 0.88rem;
     font-weight: 600;
+    color: #ffffff;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 .sidebar-footer .user-rol {
-    font-size: 0.7rem;
+    font-size: 0.72rem;
     color: var(--color-text-muted);
-    text-transform: capitalize;
 }
 
 .btn-logout {
-    background: none;
-    border: none;
-    color: var(--color-text-muted);
+    background: var(--color-surface-3);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
     cursor: pointer;
-    font-size: 1.2rem;
-    padding: var(--space-xs);
-    transition: color var(--transition);
+    font-size: 0.95rem;
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-sm);
+    transition: all var(--transition);
 }
 
 .btn-logout:hover {
-    color: var(--color-error);
+    background: var(--color-error);
+    border-color: var(--color-error);
+    color: #ffffff;
 }
 
-/* ---- Contenido principal ---- */
+/* ---- Contenido Principal ---- */
 .main-content {
     flex: 1;
     margin-left: var(--sidebar-width);
-    padding: var(--space-xl);
+    padding: var(--space-xl) var(--space-2xl);
     min-height: 100vh;
+    max-width: calc(100vw - var(--sidebar-width));
 }
 
 .page-header {
@@ -157,45 +207,70 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: var(--space-xl);
+    padding-bottom: var(--space-md);
+    border-bottom: 1px solid var(--color-border);
+    gap: var(--space-md);
 }
 
 .page-header h1 {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
+    color: #ffffff;
+    margin-bottom: 2px;
 }
 
-/* ---- Login Layout (sin sidebar) ---- */
+.page-header p {
+    margin-bottom: 0;
+    font-size: 0.88rem;
+}
+
+/* ---- Login Layout ---- */
 .login-layout {
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    background: var(--color-bg);
+    background: radial-gradient(circle at 50% 20%, #1c2233 0%, var(--color-bg) 75%);
+    padding: var(--space-lg);
 }
 
 .login-card {
     background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-xl);
     padding: var(--space-2xl);
     width: 100%;
-    max-width: 400px;
-    box-shadow: var(--shadow-lg);
+    max-width: 440px;
+    box-shadow: var(--shadow-lg), 0 0 40px rgba(168, 86, 36, 0.12);
+    position: relative;
+    overflow: hidden;
+}
+
+.login-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-secondary), var(--color-accent));
 }
 
 .login-card h1 {
     text-align: center;
-    margin-bottom: var(--space-sm);
-    color: var(--color-secondary);
+    margin-bottom: var(--space-xs);
+    color: #ffffff;
+    font-size: 1.65rem;
 }
 
 .login-card .login-subtitulo {
     text-align: center;
-    color: var(--color-text-muted);
+    color: var(--color-secondary);
     margin-bottom: var(--space-xl);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    font-weight: 500;
 }
 
-/* ---- Botón menú mobile ---- */
+/* ---- Botón Menú Mobile ---- */
 .menu-toggle {
     display: none;
     position: fixed;
@@ -206,12 +281,19 @@
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
     color: var(--color-text);
-    padding: var(--space-sm) var(--space-md);
-    font-size: 1.3rem;
+    padding: var(--space-xs) var(--space-md);
+    font-size: 1.25rem;
     cursor: pointer;
+    box-shadow: var(--shadow-md);
 }
 
 /* ---- Responsive ---- */
+@media (max-width: 992px) {
+    .main-content {
+        padding: var(--space-lg);
+    }
+}
+
 @media (max-width: 768px) {
     .sidebar {
         transform: translateX(-100%);
@@ -223,8 +305,9 @@
 
     .main-content {
         margin-left: 0;
+        max-width: 100vw;
         padding: var(--space-md);
-        padding-top: 60px;
+        padding-top: 70px;
     }
 
     .menu-toggle {
@@ -254,6 +337,12 @@
 @media (max-width: 480px) {
     .btn-group {
         flex-direction: column;
+        width: 100%;
+    }
+
+    .btn-group .btn {
+        width: 100%;
+        justify-content: center;
     }
 
     .stat-card .stat-valor {
