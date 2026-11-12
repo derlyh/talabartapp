@@ -1,3 +1,79 @@
+<style>
+    /* Garantiza que al imprimir se muestre solo la factura, no la hoja en blanco. */
+    @media print {
+        @page { margin: 10mm; }
+        html, body {
+            width: 100% !important;
+            height: auto !important;
+            overflow: visible !important;
+            background: #fff !important;
+            color: #111 !important;
+        }
+        body * { visibility: hidden !important; }
+        #modal-detalle,
+        #modal-detalle * { visibility: visible !important; }
+        #modal-detalle {
+            display: block !important;
+            position: absolute !important;
+            inset: 0 auto auto 0 !important;
+            width: 100% !important;
+            height: auto !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: visible !important;
+            background: #fff !important;
+            z-index: 99999 !important;
+        }
+        #modal-detalle .modal {
+            display: block !important;
+            position: static !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            max-height: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: visible !important;
+            border: 0 !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            background: #fff !important;
+            color: #111 !important;
+        }
+        #modal-detalle .modal-header,
+        #modal-detalle .modal-footer,
+        #modal-detalle .modal-cerrar,
+        #modal-detalle .btn { display: none !important; }
+        #modal-detalle .modal-body {
+            display: block !important;
+            height: auto !important;
+            max-height: none !important;
+            overflow: visible !important;
+            padding: 0 !important;
+            color: #111 !important;
+        }
+        #modal-detalle .comprobante-encabezado-taller,
+        #modal-detalle .info-grid,
+        #modal-detalle .totales-card,
+        #modal-detalle .tabla-contenedor {
+            background: #fff !important;
+            color: #111 !important;
+            box-shadow: none !important;
+        }
+        #modal-detalle .info-grid { border: 1px solid #ddd !important; }
+        #modal-detalle .info-label { color: #555 !important; }
+        #modal-detalle .info-valor,
+        #modal-detalle th,
+        #modal-detalle td,
+        #modal-detalle span,
+        #modal-detalle strong { color: #111 !important; }
+        #modal-detalle th { background: #f2f2f2 !important; }
+        #modal-detalle th,
+        #modal-detalle td { border-color: #ccc !important; }
+        #modal-detalle .totales-card { border: 1px solid #ccc !important; }
+        #modal-detalle .total-linea.total-destacado { color: #111 !important; }
+    }
+</style>
+
 <div class="ventas-modulo">
     <header class="page-header">
         <div>
@@ -42,19 +118,16 @@
                     <div style="font-size:.82rem; color:var(--color-text-secondary);">Dirección: <strong>CRA 2 # 7-26 A</strong></div>
                     <div style="font-size:.82rem; color:var(--color-text-secondary);">Puerto Berrío, Antioquia</div>
                 </div>
-
                 <div class="info-grid" style="grid-template-columns:repeat(2,minmax(0,1fr));">
                     <div class="info-item"><div class="info-label">Fecha y hora</div><div class="info-valor" id="detalle-fecha">—</div></div>
                     <div class="info-item"><div class="info-label">Cajero</div><div class="info-valor">Administrador</div></div>
                 </div>
-
                 <div class="tabla-contenedor mb-1">
                     <table class="detalle-items-tabla">
                         <thead><tr><th>Descripción del producto</th><th style="text-align:center;">Cant.</th><th style="text-align:right;">Precio</th><th style="text-align:right;">Subtotal</th></tr></thead>
                         <tbody id="detalle-items-tbody"><tr><td colspan="4" class="text-center text-muted">Cargando productos...</td></tr></tbody>
                     </table>
                 </div>
-
                 <div class="totales-card" style="margin-bottom:0;">
                     <div class="total-linea"><span>Subtotal</span><span id="detalle-subtotal">$0</span></div>
                     <div class="total-linea total-destacado"><span>Total</span><span id="detalle-total">$0</span></div>
