@@ -1,4 +1,20 @@
 <div class="nueva-venta-modulo">
+    <style>
+        /* Mostrar el catálogo y el resumen de venta uno debajo del otro. */
+        .nueva-venta-modulo .pos-layout {
+            grid-template-columns: minmax(0, 1fr);
+        }
+
+        .nueva-venta-modulo .pos-productos-grid {
+            max-height: none;
+            overflow-y: visible;
+        }
+
+        .nueva-venta-modulo .pos-carrito {
+            position: static;
+        }
+    </style>
+
     <!-- Encabezado de página -->
     <header class="page-header" style="margin-bottom: var(--space-md);">
         <div>
@@ -13,9 +29,9 @@
         </div>
     </header>
 
-    <!-- Layout en 2 columnas: Catálogo a la izquierda, Carrito/Orden a la derecha -->
+    <!-- Catálogo arriba y resumen/orden de venta debajo -->
     <div class="pos-layout">
-        <!-- ==================== COLUMNA IZQUIERDA: CATÁLOGO ==================== -->
+        <!-- ==================== CATÁLOGO DE PRODUCTOS ==================== -->
         <section class="pos-catalogo">
             <!-- Barra de Búsqueda y Filtro de Categorías -->
             <div class="card" style="padding: var(--space-md);">
@@ -39,7 +55,7 @@
             </div>
         </section>
 
-        <!-- ==================== COLUMNA DERECHA: ORDEN / CARRITO ==================== -->
+        <!-- ==================== ORDEN / CARRITO DEBAJO DEL CATÁLOGO ==================== -->
         <aside class="pos-carrito">
             <!-- Cabecera del carrito -->
             <div class="carrito-header">
