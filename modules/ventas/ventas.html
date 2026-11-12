@@ -1,191 +1,68 @@
 <div class="ventas-modulo">
-    <!-- Encabezado de página -->
     <header class="page-header">
         <div>
             <h1>🛒 Ventas Realizadas</h1>
             <p class="text-muted" style="margin-bottom:0;">Historial y gestión de órdenes de venta</p>
         </div>
-        <div>
-            <a href="#/nueva-venta" class="btn btn-primary btn-lg" id="btn-nueva-venta">
-                ➕ Registrar Venta
-            </a>
-        </div>
+        <div><a href="#/nueva-venta" class="btn btn-primary btn-lg" id="btn-nueva-venta">➕ Registrar Venta</a></div>
     </header>
 
-    <!-- Barra de Filtros -->
     <section class="card mb-1">
         <div class="filtros-bar">
-            <!-- Búsqueda rápida por cliente o comprobante -->
-            <div class="busqueda-input" style="flex: 1.5; min-width: 240px;">
-                <input type="text" id="filtro-buscar" placeholder="Buscar por cliente o ID de venta...">
-            </div>
-
-            <!-- Rango de Fechas -->
-            <div style="display: flex; align-items: center; gap: var(--space-xs);">
-                <label for="filtro-fecha-desde" style="margin-bottom:0; font-size:0.8rem; white-space:nowrap;">Desde:</label>
-                <input type="date" id="filtro-fecha-desde" style="min-width: 140px;">
-            </div>
-
-            <div style="display: flex; align-items: center; gap: var(--space-xs);">
-                <label for="filtro-fecha-hasta" style="margin-bottom:0; font-size:0.8rem; white-space:nowrap;">Hasta:</label>
-                <input type="date" id="filtro-fecha-hasta" style="min-width: 140px;">
-            </div>
-
-            <!-- Filtro Método de Pago -->
-            <div style="min-width: 150px;">
-                <select id="filtro-metodo">
-                    <option value="">Todos los métodos</option>
-                    <option value="efectivo">💵 Efectivo</option>
-                    <option value="transferencia">🏦 Transferencia</option>
-                    <option value="tarjeta">💳 Tarjeta</option>
-                </select>
-            </div>
-
-            <!-- Filtro Estado -->
-            <div style="min-width: 150px;">
-                <select id="filtro-estado">
-                    <option value="">Todos los estados</option>
-                    <option value="pagada">✅ Pagada</option>
-                    <option value="pendiente">⏳ Pendiente</option>
-                    <option value="cancelada">❌ Cancelada</option>
-                </select>
-            </div>
-
-            <!-- Botón Limpiar Filtros -->
-            <button type="button" class="btn btn-secondary btn-sm" id="btn-limpiar-filtros" title="Restablecer todos los filtros">
-                🔄 Limpiar
-            </button>
+            <div class="busqueda-input" style="flex:1.5; min-width:240px;"><input type="text" id="filtro-buscar" placeholder="Buscar por cliente o ID de venta..."></div>
+            <div style="display:flex; align-items:center; gap:var(--space-xs);"><label for="filtro-fecha-desde" style="margin-bottom:0; font-size:.8rem; white-space:nowrap;">Desde:</label><input type="date" id="filtro-fecha-desde" style="min-width:140px;"></div>
+            <div style="display:flex; align-items:center; gap:var(--space-xs);"><label for="filtro-fecha-hasta" style="margin-bottom:0; font-size:.8rem; white-space:nowrap;">Hasta:</label><input type="date" id="filtro-fecha-hasta" style="min-width:140px;"></div>
+            <div style="min-width:150px;"><select id="filtro-metodo"><option value="">Todos los métodos</option><option value="efectivo">💵 Efectivo</option><option value="transferencia">🏦 Transferencia</option><option value="tarjeta">💳 Tarjeta</option></select></div>
+            <div style="min-width:150px;"><select id="filtro-estado"><option value="">Todos los estados</option><option value="pagada">✅ Pagada</option><option value="pendiente">⏳ Pendiente</option><option value="cancelada">❌ Cancelada</option></select></div>
+            <button type="button" class="btn btn-secondary btn-sm" id="btn-limpiar-filtros" title="Restablecer todos los filtros">🔄 Limpiar</button>
         </div>
     </section>
 
-    <!-- Contenedor de la Tabla de Ventas -->
     <section class="card">
         <div class="tabla-contenedor">
             <table class="tabla-ventas" id="tabla-ventas">
-                <thead>
-                    <tr>
-                        <th>ID / Fecha</th>
-                        <th>Cliente</th>
-                        <th>Vendedor</th>
-                        <th>Método Pago</th>
-                        <th>Total</th>
-                        <th>Estado</th>
-                        <th style="text-align: right;">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="ventas-tbody">
-                    <tr>
-                        <td colspan="7">
-                            <div class="loading-contenedor">
-                                <div class="spinner"></div>
-                                <p>Cargando ventas...</p>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
+                <thead><tr><th>ID / Fecha</th><th>Cliente</th><th>Vendedor</th><th>Método Pago</th><th>Total</th><th>Estado</th><th style="text-align:right;">Acciones</th></tr></thead>
+                <tbody id="ventas-tbody"><tr><td colspan="7"><div class="loading-contenedor"><div class="spinner"></div><p>Cargando ventas...</p></div></td></tr></tbody>
             </table>
         </div>
-
-        <!-- Paginación -->
         <div id="paginacion-contenedor"></div>
     </section>
 
-    <!-- Modal Detalle de Venta -->
     <div class="modal-overlay hidden" id="modal-detalle" role="dialog" aria-modal="true" aria-labelledby="modal-detalle-titulo">
         <div class="modal modal-lg">
             <div class="modal-header">
-                <div>
-                    <h3 id="modal-detalle-titulo">Detalle de Venta</h3>
-                    <p class="text-muted" id="detalle-folio" style="margin-bottom:0; font-size:0.85rem; font-family:var(--font-mono);"></p>
-                </div>
+                <div><h3 id="modal-detalle-titulo">Comprobante de venta</h3><p class="text-muted" id="detalle-folio" style="margin-bottom:0; font-size:.8rem; font-family:var(--font-mono);"></p></div>
                 <button type="button" class="modal-cerrar" id="btn-cerrar-modal" aria-label="Cerrar modal">&times;</button>
             </div>
-
             <div class="modal-body">
-                <!-- Encabezado de Factura / Comprobante Comercial -->
-                <div class="comprobante-encabezado-taller" style="text-align: center; margin-bottom: var(--space-md); padding-bottom: var(--space-sm); border-bottom: 2px dashed var(--color-border);">
-                    <div style="font-size: 1.6rem; margin-bottom: 2px;">🐴</div>
-                    <h2 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--color-primary-light);">Talabartería El Rodeo</h2>
-                    <p style="font-size: 0.8rem; color: var(--color-text-secondary); margin-bottom: 2px;">Manufactura en Cuero 100% Genuino • Régimen Simplificado</p>
-                    <p style="font-size: 0.78rem; color: var(--color-text-muted); margin-bottom: 0;">Comprobante de Venta & Garantía de Taller</p>
+                <div class="comprobante-encabezado-taller" style="text-align:center; margin-bottom:var(--space-md); padding-bottom:var(--space-sm); border-bottom:2px dashed var(--color-border);">
+                    <div aria-label="Logo Talabartería El Rodeo" style="font-size:2rem; line-height:1.1;">🐴</div>
+                    <h2 style="font-size:1.2rem; font-weight:800; margin:4px 0; text-transform:uppercase; color:var(--color-primary-light);">Talabartería El Rodeo</h2>
+                    <div style="font-size:.82rem; color:var(--color-text-secondary);">NIT: <strong>646989761</strong></div>
+                    <div style="font-size:.82rem; color:var(--color-text-secondary);">Dirección: <strong>CRA 2 # 7-26 A</strong></div>
+                    <div style="font-size:.82rem; color:var(--color-text-secondary);">Puerto Berrío, Antioquia</div>
                 </div>
 
-                <!-- Información General y del Cliente -->
-                <div class="info-grid">
-                    <div class="info-item">
-                        <div class="info-label">Fecha y Hora</div>
-                        <div class="info-valor" id="detalle-fecha">—</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Estado de Venta</div>
-                        <div class="info-valor" id="detalle-estado">—</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Vendedor</div>
-                        <div class="info-valor" id="detalle-vendedor">—</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Método de Pago</div>
-                        <div class="info-valor" id="detalle-metodo">—</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Cliente</div>
-                        <div class="info-valor" id="detalle-cliente-nombre">—</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Teléfono / Email</div>
-                        <div class="info-valor" id="detalle-cliente-contacto">—</div>
-                    </div>
-                    <div class="info-item" style="grid-column: 1 / -1;" id="detalle-notas-item">
-                        <div class="info-label">Notas Adicionales</div>
-                        <div class="info-valor text-muted" id="detalle-notas">Ninguna</div>
-                    </div>
+                <div class="info-grid" style="grid-template-columns:repeat(2,minmax(0,1fr));">
+                    <div class="info-item"><div class="info-label">Fecha y hora</div><div class="info-valor" id="detalle-fecha">—</div></div>
+                    <div class="info-item"><div class="info-label">Cajero</div><div class="info-valor">Administrador</div></div>
                 </div>
 
-                <!-- Tabla de Productos del Detalle -->
-                <h4 style="margin-bottom: var(--space-sm);">📦 Productos Vendidos</h4>
                 <div class="tabla-contenedor mb-1">
                     <table class="detalle-items-tabla">
-                        <thead>
-                            <tr>
-                                <th>Producto</th>
-                                <th style="text-align: center;">Cantidad</th>
-                                <th style="text-align: right;">Precio Unit.</th>
-                                <th style="text-align: right;">Subtotal</th>
-                            </tr>
-                        </thead>
-                        <tbody id="detalle-items-tbody">
-                            <!-- Filas dinámicas generadas en JS -->
-                        </tbody>
+                        <thead><tr><th>Descripción del producto</th><th style="text-align:center;">Cant.</th><th style="text-align:right;">Precio</th><th style="text-align:right;">Subtotal</th></tr></thead>
+                        <tbody id="detalle-items-tbody"><tr><td colspan="4" class="text-center text-muted">Cargando productos...</td></tr></tbody>
                     </table>
                 </div>
 
-                <!-- Resumen de Totales -->
                 <div class="totales-card" style="margin-bottom:0;">
-                    <div class="total-linea">
-                        <span>Subtotal de artículos</span>
-                        <span id="detalle-subtotal">$0</span>
-                    </div>
-                    <div class="total-linea total-destacado">
-                        <span>Total Pagado / Por Cobrar</span>
-                        <span id="detalle-total">$0</span>
-                    </div>
-                </div>
-
-                <!-- Política de Garantía y Cuidado del Cuero -->
-                <div class="comprobante-pie-garantia" style="margin-top: var(--space-md); padding: var(--space-sm) var(--space-md); background: rgba(184, 115, 51, 0.08); border: 1px dashed var(--color-border); border-radius: var(--radius-sm); font-size: 0.78rem; color: var(--color-text-secondary); line-height: 1.4;">
-                    <strong style="color: var(--color-primary-light); display: block; margin-bottom: 2px;">🛡️ Garantía de Taller & Cuidados del Cuero:</strong>
-                    Garantía artesanal de 6 meses en costuras y herrajes. El cuero 100% natural puede presentar marcas biológicas auténticas. Para mantenimiento use grasa o bálsamo neutro para cuero. Evite mojar o lavar directamente.
+                    <div class="total-linea"><span>Subtotal</span><span id="detalle-subtotal">$0</span></div>
+                    <div class="total-linea total-destacado"><span>Total</span><span id="detalle-total">$0</span></div>
                 </div>
             </div>
-
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" id="btn-imprimir-comprobante">
-                    🖨️ Imprimir Comprobante
-                </button>
-                <button type="button" class="btn btn-primary" id="btn-cerrar-modal-pie">
-                    Cerrar
-                </button>
+                <button type="button" class="btn btn-secondary" id="btn-imprimir-comprobante">🖨️ Imprimir comprobante</button>
+                <button type="button" class="btn btn-primary" id="btn-cerrar-modal-pie">Cerrar</button>
             </div>
         </div>
     </div>
