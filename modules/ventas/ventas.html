@@ -1,10 +1,11 @@
 <style>
-    /* Garantiza que al imprimir se muestre solo la factura, no la hoja en blanco. */
+    /* La vista previa y la impresión deben mostrar la factura, incluso si el modal tiene .hidden. */
     @media print {
         @page { margin: 10mm; }
         html, body {
             width: 100% !important;
             height: auto !important;
+            min-height: 0 !important;
             overflow: visible !important;
             background: #fff !important;
             color: #111 !important;
@@ -12,7 +13,8 @@
         body * { visibility: hidden !important; }
         #modal-detalle,
         #modal-detalle * { visibility: visible !important; }
-        #modal-detalle {
+        #modal-detalle,
+        #modal-detalle.hidden {
             display: block !important;
             position: absolute !important;
             inset: 0 auto auto 0 !important;
@@ -134,7 +136,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" id="btn-imprimir-comprobante">🖨️ Imprimir comprobante</button>
+                <button type="button" class="btn btn-secondary" id="btn-imprimir-comprobante" onclick="document.getElementById('modal-detalle').classList.remove('hidden')">🖨️ Imprimir comprobante</button>
                 <button type="button" class="btn btn-primary" id="btn-cerrar-modal-pie">Cerrar</button>
             </div>
         </div>
