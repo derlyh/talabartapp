@@ -286,8 +286,39 @@ export async function init() {
     async function abrirModalDetalle(ventaId) {
         if (!modalDetalle) return;
 
-        const venta = ventasCargadas.find(v => v.id === ventaId);
-        if (!venta) return;
+        let venta = ventasCargadas.find(v => v.id === ventaId);
+
+        // Si no está en la caché local (ej. venta recién creada), buscarla en la BD
+        if (!venta) {
+            try {
+                const { data, error } = await db
+                    .from('ventas')
+                    .select(`
+                        id,
+                        fecha,
+                        total,
+                        metodo_pago,
+                        estado,
+                        notas,
+                        cliente_id,
+                        vendedor_id,
+                        clientes (id, nombre, telefono, email, direccion),
+                        usuarios!vendedor_id (id, nombre)
+                    `)
+                    .eq('id', ventaId)
+                    .single();
+
+                if (error || !data) {
+                    console.error('No se encontró la venta:', ventaId, error);
+                    return;
+                }
+                venta = data;
+            } catch (err) {
+                console.error('Error buscando venta para detalle:', err);
+                return;
+            }
+        }
+
         ventaSeleccionada = venta;
 
         // Llenar cabecera e información general
@@ -552,6 +583,14 @@ export async function init() {
 
     // Carga inicial de datos
     await cargarVentas();
+
+    // Si venimos de completar una venta, abrir automáticamente la factura
+    const ventaRecienId = sessionStorage.getItem('ventaRecienCreada');
+    if (ventaRecienId) {
+        sessionStorage.removeItem('ventaRecienCreada');
+        // Esperar un instante para que la tabla se renderice completamente
+        setTimeout(() => abrirModalDetalle(ventaRecienId), 200);
+    }
 }
 
 
@@ -1035,9 +1074,38 @@ export async function initNuevaVenta() {
             }
 
             // ============================================================
-            // 3. Notificar y redirigir a #/ventas
+            // 3. Re-leer la venta con total calculado por triggers
+            // ============================================================
+            const { data: ventaFinal, error: errFinal } = await db
+                .from('ventas')
+                .select(`
+                    id,
+                    fecha,
+                    total,
+                    metodo_pago,
+                    estado,
+                    notas,
+                    cliente_id,
+                    vendedor_id,
+                    clientes (id, nombre, telefono, email, direccion),
+                    usuarios!vendedor_id (id, nombre)
+                `)
+                .eq('id', nuevaVenta.id)
+                .single();
+
+            if (errFinal) {
+                console.warn('No se pudo recargar la venta para la factura:', errFinal);
+            }
+
+            // ============================================================
+            // 4. Notificar y redirigir a #/ventas mostrando la factura
             // ============================================================
             mostrarNotificacion('¡Venta completada con éxito!', 'success');
+
+            // Guardar el ID de la venta recién creada para que la vista
+            // de historial abra automáticamente el modal de factura.
+            sessionStorage.setItem('ventaRecienCreada', nuevaVenta.id);
+
             navegar('/ventas');
 
         } catch (error) {
