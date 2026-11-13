@@ -37,7 +37,7 @@ const CATEGORIA_ICONOS = {
 /**
  * Inicializar vista de listado de ventas
  */
-export async function init() {
+export async function init(queryParams) {
     // Estado local del listado
     let paginaActual = 1;
     const porPagina = 10;
@@ -584,12 +584,11 @@ export async function init() {
     // Carga inicial de datos
     await cargarVentas();
 
-    // Si venimos de completar una venta, abrir automáticamente la factura
-    const ventaRecienId = sessionStorage.getItem('ventaRecienCreada');
-    if (ventaRecienId) {
+    // Si venimos de completar una venta (?factura=ID), abrir automáticamente la factura
+    const facturaId = queryParams?.get('factura') || sessionStorage.getItem('ventaRecienCreada');
+    if (facturaId) {
         sessionStorage.removeItem('ventaRecienCreada');
-        // Esperar un instante para que la tabla se renderice completamente
-        setTimeout(() => abrirModalDetalle(ventaRecienId), 200);
+        await abrirModalDetalle(facturaId);
     }
 }
 
@@ -1102,11 +1101,9 @@ export async function initNuevaVenta() {
             // ============================================================
             mostrarNotificacion('¡Venta completada con éxito!', 'success');
 
-            // Guardar el ID de la venta recién creada para que la vista
-            // de historial abra automáticamente el modal de factura.
-            sessionStorage.setItem('ventaRecienCreada', nuevaVenta.id);
-
-            navegar('/ventas');
+            // Navegar al historial con el parámetro factura para que
+            // se abra automáticamente el modal/comprobante de la venta.
+            navegar(`/ventas?factura=${nuevaVenta.id}`);
 
         } catch (error) {
             console.error('Error procesando venta:', error);

@@ -44,9 +44,9 @@ registrarRuta('/ventas', {
     titulo: 'Ventas',
     html: 'modules/ventas/ventas.html',
     roles: ['admin', 'vendedor'],
-    cargar: async () => {
+    cargar: async (queryParams) => {
         const modulo = await import('./modules/ventas/ventas.js');
-        modulo.init();
+        modulo.init(queryParams);
     }
 });
 
